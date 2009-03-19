@@ -42,7 +42,7 @@ class BBSourcePage
 		while not line.nil?
 			if line =~ BBRegex::DOC_REGEX then
 				doc = BBDoc.new(self, line, lineno)
-				doc.process
+				doc.process()
 				@docBlocks.push(doc)
 			elsif line =~ BBRegex::TYPE_REGEX then
 				puts "Type found: #{$1}"
