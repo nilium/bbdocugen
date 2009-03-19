@@ -59,6 +59,8 @@ class BBSourcePage
 	
 	def readLine()
 		if @lineQueue.empty? then
+			## read next line from stream
+			
 			line = @stream.gets()
 			
 			if line.nil? then
@@ -68,18 +70,21 @@ class BBSourcePage
 			lineNumber = @stream.lineno
 			
 			line = stripComment(line).strip
-
+			
+			## if the line logically continues to the next line, read the next line
 			while line =~ /\.\.$/
 				line.slice!(/\.\.$/)
 				tempLine, tempLineNo = readLine()
 				
 				if tempLine.nil? and tempLineNo == -1 then
-					raise "Failed to read continuing line for line #{lineNumber}:\n#{line}"
+					raise "Failed to read continuing line for line #{lineNumber}:\n\"#{line}\" in #{@filePath}"
 				end
 				
 				line << " " << tempLine
 			end
-
+			
+			## split into multiple lines if the line has any semicolons in it (semicolons inside strings are accounted for)
+			## push following lines onto the line queue
 			if line.include? ";" then
 				parseLine = line
 				line = nil
@@ -111,9 +116,12 @@ class BBSourcePage
 				end
 			end
 		else
+			## get line/line number from queue
 			line, lineNumber = @lineQueue.shift()
 		end
 		
+		## strip any comment blocks from the line (this is crude)
+		# TODO: Handle comment blocks that begin and end on the same line, or possibly in the middle of a line
 		if !@inComment and !(line =~ BBRegex::DOC_REGEX).nil? and !(remPosition = (line =~ BBRegex::REM_REGEX)).nil? then
 			position = 0
 			inString = false
