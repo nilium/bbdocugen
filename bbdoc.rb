@@ -75,10 +75,9 @@ class BBDoc
 			puts "TAG FOUND: #{$1}"
 		else
 			if @activeTag.nil? then
-				puts "@activeTag.addLine(\"#{line}\")"
-#				@activeTag.addLine(line)
-			else
 				@body << " " << line
+			else
+				@activeTag.body << line
 			end
 		end
 	end
