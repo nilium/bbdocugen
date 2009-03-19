@@ -32,6 +32,7 @@ class BBSourcePage
 		@filePath = filePath
 		@lineQueue = []
 		@docBlocks = []
+		@inComment = false
 		
 		@@sourcePages.store(File.basename(filePath), self)
 	end
@@ -115,7 +116,28 @@ class BBSourcePage
 			line, lineNumber = @lineQueue.shift()
 		end
 		
-		return line, lineNumber
+		if not @inComment and not (line =~ BBRegex::DOC_REGEX) and (remPosition = (line =~ BBRegex::REM_REGEX)) then
+			position = 0
+			inString = false
+			
+			line.each_char do
+				|char|
+				
+				inString = !inString if char == '"'
+				
+				if not inString and position == remPosition then
+					line = $`.strip
+				end
+			end
+			
+			@inComment = true
+		elsif @inComment and (endremPosition = (line =~ BBRegex::REM_END_REGEX)) then
+			line = $'.strip
+		elsif @inComment then
+			return "", lineNumber
+		else
+			return line, lineNumber
+		end
 	end
 	
 	def dispose()
