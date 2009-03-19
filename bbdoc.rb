@@ -23,6 +23,25 @@
 require "regexes.rb"
 require "sourcepage.rb"
 
+class DocTag
+	def initialize(name, body)
+		@name = name		# string
+		@body = body 
+	end
+	
+	def name
+		@name
+	end
+	
+	def body
+		@body
+	end
+	
+	def body=(body)
+		@body = body
+	end
+end
+
 class BBDoc
 	def initialize(sourcePage, line, lineNumber)
 		@startLineNumber = lineNumber
