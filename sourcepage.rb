@@ -20,12 +20,18 @@
 
 # source page
 
+require "jcode"
+
+require "regexes.rb"
+require "bbdoc.rb"
+
 class BBSourcePage
 	@@sourcePages = {}
 	
 	def initialize(filePath)
 		@filePath = filePath
 		@lineQueue = []
+		@docBlocks = []
 		
 		@@sourcePages.store(File.basename(filePath), self)
 	end
@@ -35,8 +41,16 @@ class BBSourcePage
 		
 		line, lineno = readLine()
 		while not line.nil?
-			# TESTING 123 TESTING YOOOOOOO
-			puts lineno.to_s+": "+line
+			if line =~ BBRegex::DOC_REGEX then
+				doc = BBDoc.new(self, line, lineno)
+				doc.process
+				@docBlocks.push(doc)
+			elsif line =~ BBRegex::TYPE_REGEX then
+				puts "Type found: #{$1}"
+			elsif line =~ BBRegex::FUNCTION_REGEX then
+				puts "Function found: #{$1}"
+			end
+			
 			line, lineno = readLine()
 		end
 		
