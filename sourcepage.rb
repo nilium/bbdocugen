@@ -108,7 +108,7 @@ class BBSourcePage
 
 					position += 1
 				end
-
+				
 				if line.nil? then
 					line = parseLine
 				elsif lastBreak != position then
@@ -121,31 +121,21 @@ class BBSourcePage
 		end
 		
 		## strip any comment blocks from the line (this is crude)
-		# TODO: Handle comment blocks that begin and end on the same line, or possibly in the middle of a line
+		# TODO: Handle block comments that begin and end on the same line, or possibly in the middle of a line, or multiple block comments per line
 		if !@inComment and !(line =~ BBRegex::DOC_REGEX).nil? and !(remPosition = (line =~ BBRegex::REM_REGEX)).nil? then
-			position = 0
-			inString = false
-			
-			line.each_char do
-				|char|
-				
-				inString = !inString if char == '"'
-				
-				if not inString and position == remPosition then
-					line = $`.strip
-				end
-				
-				position += 1
+			if !positionInString(line, remPosition)
+				@inComment = true
+				line = $` 
 			end
-			
-			@inComment = true
-		elsif @inComment and (endremPosition = (line =~ BBRegex::REM_END_REGEX)) then
-			line = $'.strip
-			@inComment = false
-		elsif @inComment then
-			return "", lineNumber
-		else
+		elsif @inComment
+			if !(endremPosition = (line =~ BBRegex::REM_END_REGEX)).nil? then
+				line = $'.strip
+				@inComment = false
+			else
+				line = ""
+			end
 		end
+		
 		return line, lineNumber
 	end
 	
@@ -176,6 +166,9 @@ def positionInString(string, position)
 		currentPos += 1
 	end
 	
+	# basically, if you get this, you're doing something wrong, so while you can
+	# safely ignore it, you should look to see why you're checking for a position
+	# outside a string
 	raise "Position (#{position.to_s}) is outside of the string"
 end
 
