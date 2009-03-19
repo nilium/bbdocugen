@@ -126,6 +126,8 @@ class BBSourcePage
 				if not inString and position == remPosition then
 					line = $`.strip
 				end
+				
+				position += 1
 			end
 			
 			@inComment = true
