@@ -21,7 +21,6 @@
 
 require "jcode"
 
-require "common.rb"
 require "regexes.rb"
 require "bbdoc.rb"
 require "bbtype.rb"
