@@ -161,19 +161,34 @@ class BBSourcePage
 	end
 end
 
-def stripComment(line)	
+def positionInString(string, position)
 	inString = false
-	position = 0
-	line.each_char do
+	currentPos = 0
+	string.each_char do
 		|char|
 		
 		inString = !inString if char == '"'
 		
-		if char == '\'' && inString == false then
-			return line[0,position]
+		if currentPos == position then
+			return inString
 		end
 		
-		position += 1
+		currentPos += 1
+	end
+	
+	raise "Position (#{position.to_s}) is outside of the string"
+end
+
+def stripComment(line)	
+	offset = 0
+	
+	while (offset = line.index("'", offset))
+		if positionInString(line, offset) then
+			offset += 1
+		else
+			line = line[0,offset]
+			break
+		end
 	end
 	
 	return line
