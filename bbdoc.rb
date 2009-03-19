@@ -22,13 +22,18 @@
 # Documentation blocks
 
 require "regexes.rb"
+require "sourcepage.rb"
 
 class BBDoc
-	def initialize(filePath, lineNumber)
+	def initialize(sourcePage, line, lineNumber)
 		@startLineNumber = lineNumber
-		@filePAth = filePath
 		@body = ""
 		@tags = []
+		@page = sourcePage
+		
+		inline = line[BBRegex::DOC_REGEX,1]
+		addLine(inline) if not inline.nil?
+	end
 	end
 	
 	def addLine(line)
@@ -45,6 +50,10 @@ class BBDoc
 	
 	def body
 		@body
+	end
+	
+	def page
+		@page
 	end
 	
 	def attachedTo
