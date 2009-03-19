@@ -72,10 +72,11 @@ class BBDoc
 	
 	def addLine(line)
 		if line =~ BBRegex::DOC_TAG_REGEX then
-			puts $1
+			puts "TAG FOUND: #{$1}"
 		else
 			if @activeTag.nil? then
-				@activeTag.addLine(line)
+				puts "@activeTag.addLine(\"#{line}\")"
+#				@activeTag.addLine(line)
 			else
 				@body << " " << line
 			end
