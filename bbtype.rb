@@ -127,5 +127,9 @@ class BBType
 end
 
 def BBType.isTypeDefinition(line)
-	return (not (line =~ BBType::TYPE_REGEX).nil?)
+	if line =~ BBType::TYPE_REGEX then
+		return true
+	else
+		return false
+	end
 end

@@ -114,7 +114,7 @@ class BBSourcePage
 			line, lineNumber = @lineQueue.shift()
 		end
 		
-		if (not @inComment) and (not (line =~ BBRegex::DOC_REGEX)) and (remPosition = (line =~ BBRegex::REM_REGEX)) then
+		if !@inComment and !(line =~ BBRegex::DOC_REGEX).nil? and !(remPosition = (line =~ BBRegex::REM_REGEX)).nil? then
 			position = 0
 			inString = false
 			
