@@ -30,6 +30,7 @@ class BBDoc
 		@body = ""
 		@tags = []
 		@page = sourcePage
+		@activeTag = nil
 		
 		inline = line[BBRegex::DOC_REGEX,1]
 		addLine(inline) if not inline.nil?
