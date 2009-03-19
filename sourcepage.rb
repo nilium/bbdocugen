@@ -114,7 +114,7 @@ class BBSourcePage
 			line, lineNumber = @lineQueue.shift()
 		end
 		
-		if not @inComment and not (line =~ BBRegex::DOC_REGEX) and (remPosition = (line =~ BBRegex::REM_REGEX)) then
+		if (not @inComment) and (not (line =~ BBRegex::DOC_REGEX)) and (remPosition = (line =~ BBRegex::REM_REGEX)) then
 			position = 0
 			inString = false
 			
@@ -131,11 +131,12 @@ class BBSourcePage
 			@inComment = true
 		elsif @inComment and (endremPosition = (line =~ BBRegex::REM_END_REGEX)) then
 			line = $'.strip
+			@inComment = false
 		elsif @inComment then
 			return "", lineNumber
 		else
-			return line, lineNumber
 		end
+		return line, lineNumber
 	end
 	
 	def dispose()
