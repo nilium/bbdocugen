@@ -27,7 +27,7 @@ class BBSourcePage
 		@filePath = filePath
 		@lineQueue = []
 		
-		@@sourcePages.store(File.basename(filePath))
+		@@sourcePages.store(File.basename(filePath), self)
 	end
 	
 	def process()
