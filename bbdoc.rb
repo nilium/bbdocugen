@@ -34,11 +34,25 @@ class BBDoc
 		inline = line[BBRegex::DOC_REGEX,1]
 		addLine(inline) if not inline.nil?
 	end
+	
+	def process()
+		puts "Processing document block"
+		
+		line, lineNo = @page.readLine()
+		while not line.nil?
+			if line =~ REM_END_REGEX then
+				addLine($`) if not $`.nil?
+			else
+				addLine(line, lineNo)
+			end
+			
+			line, lineNo = @page.readLine()
+		end
 	end
 	
 	def addLine(line)
 		if line =~ BBRegex::DOC_TAG_REGEX then
-			puts "foobar"
+			puts $1
 		else
 			if @activeTag.nil? then
 				@activeTag.addLine(line)
