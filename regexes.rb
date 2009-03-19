@@ -23,21 +23,21 @@
 module BBRegex
 	TYPE_REGEX=/(?ix)^
 		# type and name
-		type \s+ ([a-zA-Z_]\w*)
+		type \s+ (?<name>[a-zA-Z_]\w*)
 		# extends
-		(?: \s+ extends \s+ ([a-zA-Z_]\w*) )?
+		(?: \s+ extends \s+ (?<superclass>[a-zA-Z_]\w*) )?
 		# final, abstract
-		(?: \s+ (?:(final)|(abstract)) \s* )?
+		(?: \s+ (?:(?<final>final)|(?<abstract>abstract)) \s* )?
 	$/
 	
 	TYPE_END_REGEX=/(?i)^end\s?type$/
 	
 	METHOD_REGEX=/(?ix)^
-		method \s+ ([a-zA-Z_]\w*) \s* ([^\(]*) \( .* \) \s* (?:(abstract)|(final))?
+		method \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returntype>[^\(]*) \( (?<arguments>.*) \) \s* (?:(?<abstract>abstract)|(?<final>final))?
 	$/
 	
 	FUNCTION_REGEX=/(?ix)^
-		function \s+ ([a-zA-Z_]\w*) \s* ([^\(]*) \( .* \)
+		function \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returnType>[^\(]*) \( (?<arguments>.*) \)
 	$/
 	
 	#
@@ -46,15 +46,15 @@ module BBRegex
 	# variables
 	
 	FIELD_REGEX=/(?ix)^
-		field \s+ (.+)
+		field \s+ (?<fields>.+)
 	$/
 	
 	CONST_REGEX=/(?ix)^
-		const \s+ (.+)
+		const \s+ (?<constants>.+)
 	$/
 	
 	GLOBAL_REGEX=/(?ix)^
-		global \s+ (.+)
+		global \s+ (?<globals>.+)
 	$/
 	
 	# type specifiers
@@ -81,12 +81,13 @@ module BBRegex
 	$/
 	
 	DOC_REGEX=/(?ix)^
+		(?i)\b(?<!end|end\s)
 		rem:doc(?:\s+(.+))?
 	$/
 	
 	DOC_TAG_REGEX=/(?ix)^@(\w+)\s+(.+)$/
 	
-	REM_REGEX=/(?ix)\brem\b/
+	REM_REGEX=/(?i)\b(?<!end|end\s)rem\b/
 	
 	REM_END_REGEX=/(?ix)\bend\s?rem\b/
 end
