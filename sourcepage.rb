@@ -20,8 +20,6 @@
 
 # source page
 
-require "jcode"
-
 require "regexes.rb"
 require "bbdoc.rb"
 

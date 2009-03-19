@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby -w
+#!/usr/bin/env ruby19 -w
 # Copyright (c) 2009 Noel R. Cower
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,8 +18,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
-require "jcode"
 
 require "regexes.rb"
 require "bbdoc.rb"
