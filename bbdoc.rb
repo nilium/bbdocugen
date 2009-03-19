@@ -61,8 +61,9 @@ class BBDoc
 		while not line.nil?
 			if line =~ BBRegex::REM_END_REGEX then
 				addLine($`) if not $`.nil?
+				return
 			else
-				addLine(line, lineNo)
+				addLine(line)
 			end
 			
 			line, lineNo = @page.readLine()
