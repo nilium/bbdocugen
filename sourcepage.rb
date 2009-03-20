@@ -122,18 +122,16 @@ class BBSourcePage
 		
 		## strip any comment blocks from the line (this is crude)
 		# TODO: Handle block comments that begin and end on the same line, or possibly in the middle of a line, or multiple block comments per line
-		if !@inComment and !(line =~ BBRegex::DOC_REGEX).nil? and !(remPosition = (line =~ BBRegex::REM_REGEX)).nil? then
-			if !positionInString(line, remPosition)
-				@inComment = true
-				line = $` 
-			end
+		
+		if @inComment and line =~ BBRegex::REM_END_REGEX then
+			line = $'
+			@inComment = false
+			
+			line = blockCommentBegin(stripCommentBlock(line))
 		elsif @inComment
-			if !(endremPosition = (line =~ BBRegex::REM_END_REGEX)).nil? then
-				line = $'.strip
-				@inComment = false
-			else
-				line = ""
-			end
+			line = ""
+		else
+			line = blockCommentBegin(stripCommentBlock(line))
 		end
 		
 		return line, lineNumber
@@ -149,6 +147,30 @@ class BBSourcePage
 			pageBlock.call(page)
 		end
 	end
+	
+	def blockCommentBegin(line)
+		if !@inComment and line =~ BBRegex::REM_REGEX then
+			line = $`
+			@inComment = true
+		end
+		return line
+	end
+	
+	def stripCommentBlock(line)
+		remStart = 0
+		while remStart = (line =~ BBRegex::REM_REGEX)
+			remEnd = line.index(BBRegex::REM_END_REGEX, remStart)
+			if not remEnd.nil? then
+				line.slice!(remStart, (remEnd-remStart)+$&.length)
+			else
+				break
+			end
+		end
+		return line
+	end
+	
+	private:blockCommentBegin
+	private:stripCommentBlock
 end
 
 def positionInString(string, position)
