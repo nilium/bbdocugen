@@ -87,7 +87,7 @@ module BBRegex
 	
 	DOC_TAG_REGEX=/(?ix)^@(\w+)\s+(.+)$/
 	
-	REM_REGEX=/(?i)\b(?<!end|end\s)rem\b/
+	REM_REGEX=/(?i)\b(?<!end|end\s)rem(?!\:doc)\b/
 	
 	REM_END_REGEX=/(?ix)\bend\s?rem\b/
 	
