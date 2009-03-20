@@ -69,18 +69,20 @@ class BBSourcePage
 			
 			lineNumber = @stream.lineno
 			
-			line = stripComment(line).strip
+			line = stripComments(line)
 			
 			## if the line logically continues to the next line, read the next line
-			while line =~ /\.\.$/
-				line.slice!(/\.\.$/)
-				tempLine, tempLineNo = readLine()
+			if not @inComment then
+				while line =~ /\.\.$/
+					line.slice!(/\.\.$/)
+					tempLine, tempLineNo = readLine()
 				
-				if tempLine.nil? and tempLineNo == -1 then
-					raise "Failed to read continuing line for line #{lineNumber}:\n\"#{line}\" in #{@filePath}"
+					if tempLine.nil? and tempLineNo == -1 then
+						raise "Failed to read continuing line for line #{lineNumber}:\n\"#{line}\" in #{@filePath}"
+					end
+				
+					line << " " << stripComments(tempLine)
 				end
-				
-				line << " " << tempLine
 			end
 			
 			## split into multiple lines if the line has any semicolons in it (semicolons inside strings are accounted for)
@@ -91,7 +93,7 @@ class BBSourcePage
 				inString = false
 				lastBreak = 0
 				position = 0
-				
+			
 				while position = parseLine.index(";", position)
 					unless positionInString(line, position)
 						if line.nil? then
@@ -103,7 +105,7 @@ class BBSourcePage
 					end
 					position += 1
 				end
-				
+			
 				if line.nil? then
 					line = parseLine
 				elsif lastBreak != position then
@@ -111,22 +113,8 @@ class BBSourcePage
 				end
 			end
 		else
-			## get line/line number from queue
+			## get line/line number from queue (comments have already been stripped for these lines)
 			line, lineNumber = @lineQueue.shift()
-		end
-		
-		## strip any comment blocks from the line (this is crude)
-		# TODO: Handle block comments that begin and end on the same line, or possibly in the middle of a line, or multiple block comments per line
-		
-		if @inComment and line =~ BBRegex::REM_END_REGEX then
-			line = $'
-			@inComment = false
-			
-			line = blockCommentBegin(stripCommentBlock(line))
-		elsif @inComment
-			line = ""
-		else
-			line = blockCommentBegin(stripCommentBlock(line))
 		end
 		
 		return line, lineNumber
@@ -143,6 +131,29 @@ class BBSourcePage
 		end
 	end
 	
+	def stripComments(line)
+		if @inComment then
+			return stripLineComment(stripBlockComments(line)).strip
+		else
+			return stripBlockComments(stripLineComment(line)).strip
+		end
+	end
+	
+	def stripBlockComments(line)
+		## strip any comment blocks from the line (this is crude)
+		if @inComment and line =~ BBRegex::REM_END_REGEX then
+			line = $'
+			@inComment = false
+			
+			return blockCommentBegin(stripInternalBlockComment(line))
+		elsif @inComment
+			return ""
+		else
+			## search for starting block comment, strip any block comments in the middle of the line
+			return blockCommentBegin(stripInternalBlockComment(line))
+		end
+	end
+	
 	def blockCommentBegin(line)
 		if !@inComment and line =~ BBRegex::REM_REGEX then
 			line = $`
@@ -151,7 +162,7 @@ class BBSourcePage
 		return line
 	end
 	
-	def stripCommentBlock(line)
+	def stripInternalBlockComment(line)
 		remStart = 0
 		while remStart = (line =~ BBRegex::REM_REGEX)
 			remEnd = line.index(BBRegex::REM_END_REGEX, remStart)
@@ -164,8 +175,25 @@ class BBSourcePage
 		return line
 	end
 	
+	def stripLineComment(line)
+		offset = 0
+
+		while (offset = line.index("'", offset))
+			unless positionInString(line, offset) then
+				line = line[0,offset]
+				break
+			end
+			offset += 1
+		end
+
+		return line
+	end
+	
+	private:stripComments
+	private:stripBlockComments
 	private:blockCommentBegin
-	private:stripCommentBlock
+	private:stripInternalBlockComment
+	private:stripLineComment
 end
 
 def positionInString(string, position)
@@ -187,19 +215,5 @@ def positionInString(string, position)
 	# safely ignore it, you should look to see why you're checking for a position
 	# outside a string
 	raise "Position (#{position.to_s}) is outside of the string"
-end
-
-def stripComment(line)	
-	offset = 0
-	
-	while (offset = line.index("'", offset))
-		unless positionInString(line, offset) then
-			line = line[0,offset]
-			break
-		end
-		offset += 1
-	end
-	
-	return line
 end
 
