@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require "regexes.rb"
+require "regexps.rb"
 require "bbdoc.rb"
 require "bbtype.rb"
 require "sourcepage.rb"

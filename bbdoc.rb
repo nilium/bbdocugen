@@ -20,7 +20,7 @@
 
 # Documentation blocks
 
-require "regexes.rb"
+require "regexps.rb"
 require "sourcepage.rb"
 
 class DocTag

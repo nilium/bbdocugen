@@ -20,7 +20,7 @@
 
 # source page
 
-require "regexes.rb"
+require "regexps.rb"
 require "bbdoc.rb"
 
 class BBSourcePage

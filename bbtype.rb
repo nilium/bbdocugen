@@ -20,7 +20,7 @@
 
 # Types
 
-require "regexes.rb"
+require "regexps.rb"
 require "bbdoc.rb"
 require "sourcepage.rb"
 
