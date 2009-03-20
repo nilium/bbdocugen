@@ -21,12 +21,12 @@ require "bbdoc.rb"
 require "sourcepage.rb"
 
 class BBType
-	def initialize(filePath, line, lineNumber)
+	def initialize(sourcePage, line, lineNumber)
 		if @@classMap.nil? then
 			@@classMap = {}
 		end
 		
-		@filePath = filePath
+		@page = sourcePage
 		@line = line
 		@startingLineNumber = lineNumber
 		@endingLineNumber = -1
@@ -61,8 +61,8 @@ class BBType
 		end
 	end
 	
-	def filePath
-		return @filePath
+	def page
+		return @page
 	end
 	
 	def startingLineNumber
