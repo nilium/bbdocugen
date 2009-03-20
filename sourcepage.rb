@@ -31,6 +31,7 @@ class BBSourcePage
 		@lineQueue = []
 		@docBlocks = []
 		@inComment = false
+		@inDocComment = false
 		
 		@@sourcePages.store(File.basename(filePath), self)
 	end
@@ -41,9 +42,11 @@ class BBSourcePage
 		line, lineno = readLine()
 		while not line.nil?
 			if line =~ BBRegex::DOC_REGEX then
+				@inDocComment = true
 				doc = BBDoc.new(self, line, lineno)
 				doc.process()
 				@docBlocks.push(doc)
+				@inDocComment = false
 			elsif line =~ BBRegex::TYPE_REGEX then
 				puts "Type found: #{$1}"
 			elsif line =~ BBRegex::FUNCTION_REGEX then
@@ -72,7 +75,7 @@ class BBSourcePage
 			line = stripComments(line)
 			
 			## if the line logically continues to the next line, read the next line
-			if not @inComment then
+			if not @inComment and not @inDocComment then
 				while line =~ /\.\.$/
 					line.slice!(/\.\.$/)
 					tempLine, tempLineNo = readLine()
@@ -87,7 +90,7 @@ class BBSourcePage
 			
 			## split into multiple lines if the line has any semicolons in it (semicolons inside strings are accounted for)
 			## push following lines onto the line queue
-			if line.include? ";" then
+			if line.include? ";" and not @inDocComment then
 				parseLine = line
 				line = nil
 				inString = false
