@@ -198,12 +198,11 @@ def stripComment(line)
 	offset = 0
 	
 	while (offset = line.index("'", offset))
-		if positionInString(line, offset) then
-			offset += 1
-		else
+		unless positionInString(line, offset) then
 			line = line[0,offset]
 			break
 		end
+		offset += 1
 	end
 	
 	return line
