@@ -91,28 +91,23 @@ class BBSourcePage
 				inString = false
 				lastBreak = 0
 				position = 0
-
-				parseLine.each_char do
-					|char|
-
-					if char == '"' then
-						inString = !inString
-					elsif char == ';' and not inString then
+				
+				while position = parseLine.index(";", position)
+					unless positionInString(line, position)
 						if line.nil? then
-							line = parseLine[lastBreak,position-lastBreak]
+							line = parseLine[lastBreak, position-lastBreak]
 						else
-							@lineQueue.push([parseLine[lastBreak,position-lastBreak], lineNumber])
+							@lineQueue.push([parseLine[lastBreak, position-lastBreak], lineNumber])
 						end
-						lastBreak = position + 1
+						lastBreak = position+1
 					end
-
 					position += 1
 				end
 				
 				if line.nil? then
 					line = parseLine
 				elsif lastBreak != position then
-					@lineQueue.push([parseLine[lastBreak,position-lastBreak], lineNumber])
+					@lineQueue.push([parseLine[lastBreak, position-lastBreak], lineNumber])
 				end
 			end
 		else
