@@ -87,5 +87,5 @@ module BBRegex
 	
 	REM_END_REGEX=/(?ix)\bend\s?rem\b/
 	
-	REM_MIDLINE_REGEX=/(?ix)\b(?<!end|end\s)rem\b.*\bend\s?rem\b/
+	REM_MIDLINE_REGEX=/(?ix)\b(?<!end|end\s)rem\b.*?\bend\s?rem\b/
 end
