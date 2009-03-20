@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby19 -w
 # BBDocugen - BlitzMax Documentation Generator
 # Copyright (C) 2009  Noel Cower
 # 
