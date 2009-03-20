@@ -122,7 +122,7 @@ class BBSourcePage
 		
 		## strip any comment blocks from the line (this is crude)
 		# TODO: Handle block comments that begin and end on the same line, or possibly in the middle of a line, or multiple block comments per line
-		if !@inComment and !(line =~ BBRegex::DOC_REGEX).nil? and !(remPosition = (line =~ BBRegex::REM_REGEX)).nil? then
+		if !@inComment and !(remPosition = (line =~ BBRegex::REM_REGEX)).nil? then
 			if !positionInString(line, remPosition)
 				@inComment = true
 				line = $` 
