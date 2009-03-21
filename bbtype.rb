@@ -25,7 +25,6 @@ class BBType
 	
 	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
 		@page = sourcePage
-		@line = line
 		@startingLineNumber = lineNumber
 		@endingLineNumber = -1
 		
@@ -35,7 +34,7 @@ class BBType
 		
 		@docs = nil
 		
-		matches = BBRegex::TYPE_REGEX.match(@line)
+		matches = BBRegex::TYPE_REGEX.match(line)
 		
 		@name = matches[1]
 		@subclass = matches[2] if not matches[2].nil?
