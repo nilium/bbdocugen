@@ -17,6 +17,8 @@
 # Regex constants
 
 module BBRegex
+	VISIBILITY_REGEX=/(?i)^(?:(?<private>private)|(?<public>public))$/
+	
 	TYPE_REGEX=/(?ix)^
 		# type and name
 		type \s+ (?<name>[a-zA-Z_]\w*)
