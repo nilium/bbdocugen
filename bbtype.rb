@@ -21,7 +21,7 @@ require "bbdoc.rb"
 require "sourcepage.rb"
 
 class BBType
-	def initialize(sourcePage, line, lineNumber)
+	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
 		if @@classMap.nil? then
 			@@classMap = {}
 		end
@@ -43,6 +43,8 @@ class BBType
 		@subclass = matches[2] if not matches[2].nil?
 		@isFinal = (not matches[3].nil?)
 		@isAbstract = (not matches[4].nil?)
+		@isExtern = isExtern
+		@isPrivate = isPrivate
 		
 		@@classMap.store(name.downcase, self)
 	end
@@ -82,15 +84,23 @@ class BBType
 	end
 	
 	def abstract?
-		return @isAbstract
+		@isAbstract
 	end
 	
 	def final?
-		return @isFinal
+		@isFinal
+	end
+	
+	def extern?
+		@isExtern
+	end
+	
+	def private?
+		@isPrivate
 	end
 	
 	def name
-		return @name
+		@name
 	end
 	
 	def subclass?
@@ -98,7 +108,7 @@ class BBType
 	end
 	
 	def subclass
-		return @subclass
+		@subclass
 	end
 	
 	def addMethod(bbmethod)
