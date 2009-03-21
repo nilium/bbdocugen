@@ -21,11 +21,9 @@ require "bbdoc.rb"
 require "sourcepage.rb"
 
 class BBType
+	@@classMap = {}
+	
 	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
-		if @@classMap.nil? then
-			@@classMap = {}
-		end
-		
 		@page = sourcePage
 		@line = line
 		@startingLineNumber = lineNumber
