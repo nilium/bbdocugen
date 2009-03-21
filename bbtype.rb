@@ -46,8 +46,8 @@ class BBType
 		@@classMap.store(name.downcase, self)
 	end
 	
-	def process(page)
-		line, lineNumber = page.readLine()
+	def process()
+		line, lineNumber = @page.readLine()
 		
 		while not line.nil?
 			if line =~ BBRegex::TYPE_END_REGEX then
@@ -56,7 +56,7 @@ class BBType
 			
 			# TODO: Fucking everything
 			
-			line, lineNumber = page.readLine()
+			line, lineNumber = @page.readLine()
 		end
 	end
 	
