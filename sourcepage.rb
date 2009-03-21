@@ -20,6 +20,8 @@ require "regexps.rb"
 require "bbdoc.rb"
 
 class BBSourcePage
+	include BBRegex
+	
 	@@sourcePages = {}
 	
 	def initialize(filePath)
@@ -28,6 +30,7 @@ class BBSourcePage
 		@docBlocks = []
 		@inComment = false
 		@inDocComment = false
+		@elements = []
 		
 		@@sourcePages.store(File.basename(filePath), self)
 	end
@@ -35,17 +38,29 @@ class BBSourcePage
 	def process()
 		@stream = File.new(@filePath)
 		
+		isPrivate = false
+		isExtern = false
+		
 		line, lineno = readLine()
 		while not line.nil?
-			if line =~ BBRegex::DOC_REGEX then
+			
+			if md = VISIBILITY_REGEX.match(line) then
+				if md[:private].nil? then
+					isPrivate = false
+				else
+					isPrivate = true
+				end
+			elsif md = DOC_REGEX.match(line) then
 				@inDocComment = true
 				doc = BBDoc.new(self, line, lineno)
 				doc.process()
 				@docBlocks.push(doc)
 				@inDocComment = false
-			elsif line =~ BBRegex::TYPE_REGEX then
-				puts "Type found: #{$1}"
-			elsif line =~ BBRegex::FUNCTION_REGEX then
+			elsif md = TYPE_REGEX.match(line) then
+				type = BBType.new(self, line, lineno, isExtern, isPrivate)
+				@elements.push(type)
+				type.process
+			elsif md = FUNCTION_REGEX.match(line) then
 				puts "Function found: #{$1}"
 			end
 			
