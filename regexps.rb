@@ -41,6 +41,7 @@ module BBRegex
 	
 	# variables
 	
+	## comma-separated, parse names/values separately
 	FIELD_REGEX=/(?ix)^
 		field \s+ (?<fields>.+)
 	$/
@@ -73,7 +74,9 @@ module BBRegex
 	# value (name[type][ = value])
 	
 	VALUE_REGEX=/(?ix)^
-		# to-do
+		(?<name>[a-zA-Z_]\w*)
+		\s* (?<typename>#{TYPENAME_REGEX}(?:\(.*?\))?)
+		(?:\s* = \s*(?<value>.+))?
 	$/
 	
 	DOC_REGEX=/(?ix)^
