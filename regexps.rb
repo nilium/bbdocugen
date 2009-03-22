@@ -35,7 +35,7 @@ module BBRegex
 	$/
 	
 	FUNCTION_REGEX=/(?ix)^
-		function \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returnType>[^\(]*) \( (?<arguments>.*) \)
+		function \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returntype>[^\(]*) \( (?<arguments>.*) \)
 		(?:\s*"(?<callingConv>[^"])*")
 	$/
 	
@@ -44,7 +44,7 @@ module BBRegex
 	$/
 	
 	EXTERN_FUNCTION_REGEX=/(?ix)^
-		function \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returnType>[^\(]*) \( (?<arguments>.*) \)
+		function \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returntype>[^\(]*) \( (?<arguments>.*) \)
 		(?:\s*"(?<callingConv>[^"]*)")?
 		(?:\s*="(?<externName>[^"]*)")?
 	$/
