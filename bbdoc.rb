@@ -99,14 +99,6 @@ class BBDoc
 		@page
 	end
 	
-	def attachedTo
-		@attachedTo
-	end
-	
-	def attachedTo=(obj)
-		obj.documentation = self
-	end
-	
 	def startingLineNumber
 		@startingLineNumber
 	end
