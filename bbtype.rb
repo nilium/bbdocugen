@@ -182,18 +182,6 @@ class BBType
 		end
 	end
 	
-	def addMethod(bbmethod)
-	end
-	
-	def addField(bbfield)
-	end
-	
-	def addGlobal(bbvar)
-	end
-	
-	def addConst(bbvar)
-	end
-	
 	def documentation=(docs)
 		@docs = docs
 	end
