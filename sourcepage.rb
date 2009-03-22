@@ -20,6 +20,7 @@ require "regexps.rb"
 require "bbdoc.rb"
 require "bbtype.rb"
 require "bbmethod.rb"
+require "bbvar.rb"
 
 class BBSourcePage
 	include BBRegex
@@ -80,6 +81,14 @@ class BBSourcePage
 				if method.startingLineNumber-lastDoc.endingLineNumber <= DOCUMENTATION_LINE_THRESHOLD then
 					method.documentation = lastDoc
 				end
+			elsif VARIABLE_REGEX.match(line) then
+				if lastDoc and lineno - lastDoc.endingLineNumber > DOCUMENTATION_LINE_THRESHOLD then
+					lastDoc = nil
+				end
+				
+				processValues(line, lineno, lastDoc, isExtern, isPrivate)
+				
+				lastDoc = nil
 			end
 			
 			line, lineno = readLine()
@@ -87,6 +96,24 @@ class BBSourcePage
 		
 		@stream.close()
 		stream = nil
+	end
+	
+	def processValues(line, lineNo, lastDoc, isExtern, isPrivate)
+		puts "Processing values: #{line}"
+		
+		md = VARIABLE_REGEX.match(line)
+		raise "#{page.filePath}: Failed to match member type for '#{line}' at #{lineNumber}" if md.nil?
+		
+		mtype = md[:membertype].downcase
+		values = md[:values].strip
+		
+		String.each_section(values) do
+			|section|
+			
+			var = BBVar.new(section, lineNo, self, mtype, isExtern, isPrivate)
+			var.documentation = lastDoc
+			@elements.push(var)
+		end
 	end
 	
 	def readLine()
