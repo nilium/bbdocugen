@@ -48,6 +48,7 @@ class BBType
 		
 		@members = []
 		
+		@insideInspect = false
 		BBType.update_links
 	end
 	
@@ -148,6 +149,28 @@ class BBType
 		@name
 	end
 	
+	def inspect
+		if @insideInspect then
+			outs = "#{self.name}"
+		else
+			@insideInspect = true
+			outs = "Type #{self.name}"
+			outs << " Extends #{self.superclass.to_s}" if self.is_subclass?
+			outs << " Abstrast" if self.abstract?
+			outs << " Final" if self.final?
+		
+			self.members.each do
+				|member|
+				outs << "\n    #{member.inspect}"
+			end
+		
+			outs << "\nEnd Type"
+			@insideInspect = false
+		end
+		
+		return outs
+	end
+	
 	def is_subclass?
 		return (not @superclass.nil?)
 	end
@@ -221,7 +244,7 @@ class BBType
 	end
 	
 	def to_s
-		return name
+		return self.name
 	end
 	
 	def self.update_links()
