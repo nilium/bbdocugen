@@ -254,3 +254,45 @@ def positionInString(string, position)
 	raise "Position (#{position.to_s}) is outside of the string"
 end
 
+def String.each_section(forString, separator=",", ignoreParentheses=false, &block)
+	unless forString.empty?
+		parenLevel = 0
+		index = 0
+		lastBreak = 0
+		char = nil
+		inString = false
+
+		while index < forString.length
+			if inString and forString[index] != "\"" then
+				next
+				index += 1
+			end
+			
+			case forString[index]
+				when ","
+					if parenLevel == 0 then
+						block.call(forString[lastBreak,index-lastBreak])
+						lastBreak = index+1
+					end
+				
+				when "("
+					parenLevel += 1 unless ignoreParentheses
+			
+				when ")"
+					parenLevel -= 1 unless ignoreParentheses
+					if parenLevel < 0 then
+						raise "Parsing error: too many closing parentheses in '#{args}' at #{index}"
+					end
+				
+				when "\""
+					inString = !inString
+			end
+
+			index += 1
+		end
+
+		if lastBreak != index then
+			block.call(forString[lastBreak..-1])
+		end
+	end
+end
