@@ -222,8 +222,16 @@ class BBSourcePage
 		return line
 	end
 	
+	def inspect
+		"<PAGE #{self.filePath}>"
+	end
+	
 	def filePath
 		@filePath
+	end
+	
+	def elements
+		@elements
 	end
 	
 	private:stripComments
