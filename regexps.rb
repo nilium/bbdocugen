@@ -74,14 +74,14 @@ module BBRegex
 	TYPENAME_REGEX=/(?ix)
 			# type shortcut
 		(?:
-			( [!#%] | @{1,2} | \$[zw]? )
+			(?<shortcut> [!#%] | @{1,2} | \$[zw]? )
 			|
-			: \s* ([a-zA-Z_]\w*)
+			: \s* (?<fulltype> [a-zA-Z_]\w*)
 		)
 			# pointer
 		(?: \s+ (Ptr) \b)*
 			# array
-		(\[[^\]]+\])?
+		(\s*\[[^\]]*\])?
 			# reference
 		(?: \s+ (Var) \b)?
 	/
