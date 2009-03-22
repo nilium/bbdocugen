@@ -50,6 +50,10 @@ class BBSourcePage
 				else
 					isPrivate = true
 				end
+			elsif md = EXTERN_REGEX.match(line) then
+				isExtern = true
+			elsif md = EXTERN_END_REGEX.match(line) then
+				isExtern = false
 			elsif md = DOC_REGEX.match(line) then
 				@inDocComment = true
 				doc = BBDoc.new(self, line, lineno)
