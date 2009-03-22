@@ -19,6 +19,8 @@
 require "regexps.rb"
 require "sourcepage.rb"
 
+DOCUMENTATION_LINE_THRESHOLD = 2
+
 class DocTag
 	def initialize(name, body)
 		@name = name		# string
@@ -41,22 +43,33 @@ end
 class BBDoc
 	def initialize(sourcePage, line, lineNumber)
 		@startLineNumber = lineNumber
+		@endingLineNumber = nil
 		@body = ""
 		@tags = []
 		@page = sourcePage
 		@activeTag = nil
 		
 		inline = line[BBRegex::DOC_REGEX,1]
+		
+		if inline =~ BBRegex::REM_END_REGEX then
+			inline = $`
+			@endingLineNumber = lineNumber
+		end
+		
 		addLine(inline) if not inline.nil?
 	end
 	
 	def process()
+		
+		return unless @endingLineNumber.nil?
+		
 		puts "Processing document block"
 		
-		line, lineNo = @page.readLine()
+		line, lineno = @page.readLine()
 		while not line.nil?
 			if line =~ BBRegex::REM_END_REGEX then
 				addLine($`) if not $`.nil?
+				@endingLineNumber = lineno
 				return
 			else
 				addLine(line)
@@ -92,5 +105,13 @@ class BBDoc
 	
 	def attachedTo=(obj)
 		obj.documentation = self
+	end
+	
+	def startingLineNumber
+		@startingLineNumber
+	end
+	
+	def endingLineNumber
+		@endingLineNumber
 	end
 end
