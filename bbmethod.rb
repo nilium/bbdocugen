@@ -15,67 +15,52 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require "bbmember.rb"
+require "bbvar.rb"
 require "sourcepage.rb"
 
-class BBMethodParam < BBMember
-	def initialize(param, lineNumber, isExtern, isPrivate)
-		md = VALUE_REGEX.match(param)
+class BBMethod < BBMember
+	PARAMTYPE="param"
+	
+	def initialize(line, lineNumber, owner, page, isExtern, isPrivate)
+		regex = nil
+		if owner.nil? then
+			if isExtern then
+				regex = EXTERN_FUNCTION_REGEX
+			else
+				regex = FUNCTION_REGEX
+			end
+		else
+			if not isExtern and (md = FUNCTION_REGEX.match(line)).nil? then
+				regex = METHOD_REGEX
+			end
+		end
 		
-		if (@type = md[:typename]).nil? then
+		md = regex.match(line) if md.nil?
+		
+		raise "Failed to recognize method type for '#{line}' at #{lineNumber}<br/>#{type}" if md.nil?
+		
+		@owner = owner
+		@page = page
+		
+		@name = md[:name]
+		td = /^#{TYPENAME_REGEX}$/.match(md[:returntype].strip)
+		if td.nil? then
 			@type = "Int"
-		elsif md[:fulltype] then
+		elsif td[:fulltype] then
+			@type = td[:fulltype]
 			@type.slice!(/^:\s*/)
-		elsif shortcut = md[:shortcut] then
+		elsif shortcut = td[:shortcut] then
+			@type = shortcut
 			@type[0,shortcut.length] = TYPE_SHORTCUTS[shortcut]
 		end
 		
-		@name = md[:name]
-		@defaultValue = md[:value]
-		@startingLineNumber = @endingLineNumber = lineNumber
-		
-		@isExtern = isExtern
-		@isPrivate = isPrivate
-	end
-	
-	def process
-		return
-	end
-	
-	def memberType
-		return "methodParam"
-	end
-end
-
-class BBMethod < BBMember
-	def initialize(line, lineNumber, owner, page, isExtern, isPrivate)
-		if type.nil? then
-			md = if isExtern then
-				EXTERN_FUNCTION_REGEX.match(line)
-			else
-				FUNCTION_REGEX.match(line)
-			end
-		else
-			if isExtern then
-				md = METHOD_REGEX.match(line)
-			else
-				md = METHOD_REGEX.match(line) if (md = FUNCTION_REGEX.match(line)).nil?
-			end
-		end
-		
-		raise "Failed to recognize method type" if md.nil?
-		
-		@owner = owner
-		
-		@name = md[:name]
-		@type = md[:returntype]
-		
-		@args = processArgs(md[:args])
-		
 		@isExtern = isExtern
 		@isPrivate = isPrivate
 		
-		@endingLineNumber = lineNumber
+		@startingLineNumber = lineNumber
 		@endingLineNumber = lineNumber if isExtern
+		
+		@args = processArgs(md[:arguments])
 	end
 	
 	def processArgs(args)
@@ -100,7 +85,7 @@ class BBMethod < BBMember
 				case char
 					when ","
 						if parenLevel == 0 then
-							argList.push(BBMethodParam.new(args[lastBreak,index-lastBreak].strip, @startingLineNumber))
+							argList.push(BBVar.new(args[lastBreak,index-lastBreak].strip, self.startingLineNumber, self.page, PARAMTYPE, self.extern?, self.private?))
 							lastBreak = index+1
 						end
 					
@@ -118,7 +103,7 @@ class BBMethod < BBMember
 			end
 
 			if lastBreak != index then
-				argList.push(BBMethodParam.new(args[lastBreak..-1].strip, @startingLineNumber))
+				argList.push(BBVar.new(args[lastBreak..-1].strip, self.startingLineNumber, self.page, PARAMTYPE, self.extern?, self.private?))
 			end
 		end
 		
