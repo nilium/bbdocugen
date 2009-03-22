@@ -53,9 +53,9 @@ class BBType
 		line, lineNumber = @page.readLine()
 		
 		funcRegex = if @isExtern then
-			BBRegex::EXTERN_FUNCTION_REGEX
+			BBRegex::METHOD_REGEX
 		else
-			BBRegex::FUNCTION_REGEX
+			Regexp.union(BBRegex::FUNCTION_REGEX, BBRegex::METHOD_REGEX)
 		end
 		
 		lastDoc = nil
