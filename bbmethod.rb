@@ -129,6 +129,8 @@ class BBMethod < BBMember
 					nested -= 1
 				end
 			end
+			
+			line, lineno = @page.readLine()
 		end # until
 	end # process
 	
