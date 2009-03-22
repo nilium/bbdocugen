@@ -222,6 +222,10 @@ class BBSourcePage
 		return line
 	end
 	
+	def filePath
+		@filePath
+	end
+	
 	private:stripComments
 	private:stripBlockComments
 	private:blockCommentBegin
