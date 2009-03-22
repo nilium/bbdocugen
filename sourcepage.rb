@@ -173,7 +173,7 @@ class BBSourcePage
 	
 	def stripBlockComments(line)
 		## strip any comment blocks from the line (this is crude)
-		if @inComment and line =~ BBRegex::REM_END_REGEX then
+		if @inComment and line =~ REM_END_REGEX then
 			line = $'
 			@inComment = false
 			
@@ -187,7 +187,7 @@ class BBSourcePage
 	end
 	
 	def blockCommentBegin(line)
-		if !@inComment and line =~ BBRegex::REM_REGEX then
+		if !@inComment and line =~ REM_REGEX then
 			line = $`
 			@inComment = true
 		end
@@ -196,8 +196,8 @@ class BBSourcePage
 	
 	def stripInternalBlockComment(line)
 		remStart = 0
-		while remStart = (line =~ BBRegex::REM_REGEX)
-			remEnd = line.index(BBRegex::REM_END_REGEX, remStart)
+		while remStart = (line =~ REM_REGEX)
+			remEnd = line.index(REM_END_REGEX, remStart)
 			if not remEnd.nil? then
 				line.slice!(remStart, (remEnd-remStart)+$&.length)
 			else
