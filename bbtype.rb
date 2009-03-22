@@ -37,7 +37,7 @@ class BBType
 		matches = BBRegex::TYPE_REGEX.match(line)
 		
 		@name = matches[1]
-		@subclass = matches[2] if not matches[2].nil?
+		@subclass = matches[2] unless matches[2].nil?
 		@isFinal = (not matches[3].nil?)
 		@isAbstract = (not matches[4].nil?)
 		@isExtern = isExtern
