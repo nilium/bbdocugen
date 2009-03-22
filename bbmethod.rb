@@ -18,7 +18,7 @@ require "bbmember.rb"
 require "sourcepage.rb"
 
 class BBMethodParam < BBMember
-	def initialize(param, lineNumber)
+	def initialize(param, lineNumber, isExtern, isPrivate)
 		md = VALUE_REGEX.match(param)
 		
 		if (@type = md[:typename]).nil? then
@@ -32,6 +32,9 @@ class BBMethodParam < BBMember
 		@name = md[:name]
 		@defaultValue = md[:value]
 		@startingLineNumber = @endingLineNumber = lineNumber
+		
+		@isExtern = isExtern
+		@isPrivate = isPrivate
 	end
 	
 	def process
@@ -144,4 +147,9 @@ class BBMethod < BBMember
 		end # until
 	end # process
 	
+	def memberType
+		"method"
+	end
+	
+	private :processArgs
 end
