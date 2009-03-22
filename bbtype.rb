@@ -87,7 +87,13 @@ class BBType
 					end
 				end
 			elsif md = BBRegex::VARIABLE_REGEX.match(line) then
+				if lastDoc and (lineNumber - lastDoc.endingLineNumber > DOCUMENTATION_LINE_THRESHOLD) then
+					lastDoc = nil
+				end
+				
 				processValues(line, lineNumber, lastDoc)
+				
+				lastDoc = nil
 			end
 			
 			line, lineNumber = @page.readLine()
@@ -105,6 +111,7 @@ class BBType
 			|section|
 			
 			var = BBVar.new(section, lineNo, self.page, mtype, self.extern?, self.private?)
+			var.documentation = lastDoc
 			@members.push(var)
 		end
 	end
