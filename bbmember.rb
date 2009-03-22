@@ -47,6 +47,10 @@ class BBMember
 		@type
 	end
 	
+	def page
+		@page
+	end
+	
 	def extern?
 		@isExtern
 	end
