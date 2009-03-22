@@ -68,12 +68,19 @@ class BBSourcePage
 				type = BBType.new(self, line, lineno, isExtern, isPrivate)
 				@elements.push(type)
 				type.process
+				
 				unless lastDoc.nil?
 					type.documentation=lastDoc if (type.startingLineNumber-lastDoc.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
 					lastDoc = nil
 				end
-			elsif md = FUNCTION_REGEX.match(line) then
-				puts "Function found: #{$1}"
+			elsif (!isExtern and md = FUNCTION_REGEX.match(line)) or (isExtern and md = EXTERN_FUNCTION_REGEX.match(line)) then
+				method = BBMethod.new(line, lineno, nil, self, isExtern, isPrivate)
+				method.process()
+				@elements.push(method)
+				
+				if method.startingLineNumber-lastDoc.endingLineNumber <= DOCUMENTATION_LINE_THRESHOLD then
+					method.documentation = lastDoc
+				end
 			end
 			
 			line, lineno = readLine()
