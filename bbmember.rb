@@ -51,6 +51,10 @@ class BBMember
 		@isExtern
 	end
 	
+	def private?
+		@isPrivate
+	end
+	
 	def startingLineNumber
 		@startingLineNumber
 	end
@@ -61,6 +65,10 @@ class BBMember
 	
 	def documentation
 		@documentation
+	end
+	
+	def documentation=(doc)
+		@documentation = doc
 	end
 	
 	def memberType
