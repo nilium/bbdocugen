@@ -52,7 +52,7 @@ module BBRegex
 	EXTERN_END_REGEX=/(?ix)^end\s?extern$/
 	
 	#
-	METHOD_REGEX_END=/(?i)^end\s?(method|function)$/
+	METHOD_END_REGEX=/(?i)^end\s?(method|function)$/
 	
 	# variables
 	
