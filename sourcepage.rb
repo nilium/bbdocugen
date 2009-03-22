@@ -128,7 +128,7 @@ class BBSourcePage
 				position = 0
 			
 				while position = parseLine.index(";", position)
-					unless positionInString(line, position)
+					unless positionInString(parseLine, position)
 						if line.nil? then
 							line = parseLine[lastBreak, position-lastBreak]
 						else
