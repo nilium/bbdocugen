@@ -209,9 +209,22 @@ class BBSourcePage
 	
 	def stripLineComment(line)
 		offset = 0
-
+		
+		commMidline=Regexp.union(/(?ix)^rem:doc\s*.+?\s*end\s?rem\b/,REM_MIDLINE_REGEX)
+		matchOffset = 0
+		
+		return line if @inComment or @inDocComment
+		
 		while (offset = line.index("'", offset))
-			unless positionInString(line, offset) then
+			while match = commMidline.match(line, matchOffset)
+				if offset >= match.begin(0) and offset <= match.end(0) then
+					offset = match.end(0)+1
+					break
+				end
+				matchOffset = match.end(0)+1
+			end
+			
+			unless offset >= line.length or positionInString(line, offset) then
 				line = line[0,offset]
 				break
 			end
