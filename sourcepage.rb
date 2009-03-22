@@ -18,6 +18,8 @@
 
 require "regexps.rb"
 require "bbdoc.rb"
+require "bbtype.rb"
+require "bbmethod.rb"
 
 class BBSourcePage
 	include BBRegex
@@ -40,6 +42,7 @@ class BBSourcePage
 		
 		isPrivate = false
 		isExtern = false
+		lastDoc = nil
 		
 		line, lineno = readLine()
 		while not line.nil?
@@ -60,10 +63,15 @@ class BBSourcePage
 				doc.process()
 				@docBlocks.push(doc)
 				@inDocComment = false
+				lastDoc = doc
 			elsif md = TYPE_REGEX.match(line) then
 				type = BBType.new(self, line, lineno, isExtern, isPrivate)
 				@elements.push(type)
 				type.process
+				unless lastDoc.nil?
+					type.documentation=lastDoc if (type.startingLineNumber-lastDoc.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
+					lastDoc = nil
+				end
 			elsif md = FUNCTION_REGEX.match(line) then
 				puts "Function found: #{$1}"
 			end
