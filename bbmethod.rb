@@ -76,9 +76,11 @@ class BBMethod < BBMember
 	end
 	
 	def processArgs(args)
+		args = args.strip()
+		
 		argList = []
 		
-		begin
+		unless args.empty?
 			parenLevel = 0
 			index = 0
 			lastBreak = 0
@@ -95,7 +97,7 @@ class BBMethod < BBMember
 				case char
 					when ","
 						if parenLevel == 0 then
-							argList.push(args[lastBreak,index-lastBreak].strip)
+							argList.push(BBMethodParam.new(args[lastBreak,index-lastBreak].strip, @startingLineNumber))
 							lastBreak = index+1
 						end
 					
@@ -113,15 +115,11 @@ class BBMethod < BBMember
 			end
 
 			if lastBreak != index then
-				argList.push(args[lastBreak..-1].strip)
+				argList.push(BBMethodParam.new(args[lastBreak..-1].strip, @startingLineNumber))
 			end
 		end
 		
-		## individual arguments
-		returnArgs = []
-		begin
-			## TODO: Return list of BBMethodParams for method
-		end
+		return argList
 	end
 	
 	def process
