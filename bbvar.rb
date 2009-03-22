@@ -47,4 +47,18 @@ class BBVar < BBMember
 	def memberType
 		@memberType
 	end
+	
+	def inspect
+		outs = "#{self.memberType} #{self.name}:#{self.type}"
+		outs << " = #{self.defaultValue}" if self.has_default?
+		return outs
+	end
+	
+	def has_default?
+		return !@defaultValue.nil?
+	end
+	
+	def defaultValue
+		@defaultValue
+	end
 end
