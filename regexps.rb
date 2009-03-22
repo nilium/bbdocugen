@@ -57,16 +57,8 @@ module BBRegex
 	# variables
 	
 	## comma-separated, parse names/values separately
-	FIELD_REGEX=/(?ix)^
-		field \s+ (?<fields>.+)
-	$/
-	
-	CONST_REGEX=/(?ix)^
-		const \s+ (?<constants>.+)
-	$/
-	
-	GLOBAL_REGEX=/(?ix)^
-		global \s+ (?<globals>.+)
+	VARIABLE_REGEX=/(?ix)^
+		(?<membertype>const|global|field) \s+ (?<values>.+)
 	$/
 	
 	# type specifiers
