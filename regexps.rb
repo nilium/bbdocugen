@@ -26,17 +26,24 @@ module BBRegex
 		(?: \s+ extends \s+ (?<superclass>[a-zA-Z_]\w*) )?
 		# final, abstract
 		(?: \s+ (?:(?<final>final)|(?<abstract>abstract)) \s* )?
+		# attributes
+		(?: \s* \{(?<attributes> .*)\})?
 	$/
 	
 	TYPE_END_REGEX=/(?i)^end\s?type$/
 	
 	METHOD_REGEX=/(?ix)^
-		method \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returntype>[^\(]*) \( (?<arguments>.*) \) \s* (?:(?<abstract>abstract)|(?<final>final))?
+		(?: method \s+ (?<name> [a-zA-Z_]\w* ) )
+		(?: \s* (?<returntype> [^\(]* ) )
+		(?: \( (?<arguments> .* ) \) )
+		(?: \s* (?<abstract>abstract)|(?<final>final) )?
+		(?: \s* \{(?<attributes> .*)\} )?
 	$/
 	
 	FUNCTION_REGEX=/(?ix)^
 		function \s+ (?<name>[a-zA-Z_]\w*) \s* (?<returntype>[^\(]*) \( (?<arguments>.*) \)
 		(?:\s*"(?<callingConv>[^"])*")
+		(?: \s* \{(?<attributes> .*)\} )?
 	$/
 	
 	EXTERN_REGEX=/(?ix)^
@@ -58,7 +65,8 @@ module BBRegex
 	
 	## comma-separated, parse names/values separately
 	VARIABLE_REGEX=/(?ix)^
-		(?<membertype>const|global|field) \s+ (?<values>.+)
+		(?<membertype>const|global|field) \s+ (?<values>.+?)
+		(?: \s* \{(?<attributes> .*)\} )?
 	$/
 	
 	# type specifiers
