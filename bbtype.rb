@@ -102,7 +102,9 @@ class BBType
 		
 		String.each_section(values) do
 			|section|
-			puts "SEC #{section}"
+			
+			var = BBVar.new(section, lineNo, self.page, mtype, self.extern?, self.private?)
+			@members.push(var)
 		end
 	end
 	
