@@ -97,7 +97,7 @@ class BBType
 		md = BBRegex::VARIABLE_REGEX.match(line)
 		raise "#{page.filePath}: Failed to match member type for '#{line}' at #{lineNumber}" if md.nil?
 		
-		mtype = md[:membertype]
+		mtype = md[:membertype].downcase
 		values = md[:values].strip
 		
 		String.each_section(values) do
