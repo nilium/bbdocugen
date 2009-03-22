@@ -149,6 +149,10 @@ class BBType
 		@name
 	end
 	
+	def members
+		return @members
+	end
+	
 	def inspect
 		if @insideInspect then
 			outs = "#{self.name}"
