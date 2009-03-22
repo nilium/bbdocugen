@@ -46,25 +46,24 @@ class BBSourcePage
 		
 		line, lineno = readLine()
 		while not line.nil?
-			
-			if md = VISIBILITY_REGEX.match(line) then
-				if md[:private].nil? then
+			if VISIBILITY_REGEX.match(line) then
+				if $~[:private].nil? then
 					isPrivate = false
 				else
 					isPrivate = true
 				end
-			elsif md = EXTERN_REGEX.match(line) then
+			elsif EXTERN_REGEX.match(line) then
 				isExtern = true
-			elsif md = EXTERN_END_REGEX.match(line) then
+			elsif EXTERN_END_REGEX.match(line) then
 				isExtern = false
-			elsif md = DOC_REGEX.match(line) then
+			elsif DOC_REGEX.match(line) then
 				@inDocComment = true
 				doc = BBDoc.new(self, line, lineno)
 				doc.process()
 				@docBlocks.push(doc)
 				@inDocComment = false
 				lastDoc = doc
-			elsif md = TYPE_REGEX.match(line) then
+			elsif TYPE_REGEX.match(line) then
 				type = BBType.new(self, line, lineno, isExtern, isPrivate)
 				@elements.push(type)
 				type.process
@@ -73,7 +72,7 @@ class BBSourcePage
 					type.documentation=lastDoc if (type.startingLineNumber-lastDoc.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
 					lastDoc = nil
 				end
-			elsif (!isExtern and md = FUNCTION_REGEX.match(line)) or (isExtern and md = EXTERN_FUNCTION_REGEX.match(line)) then
+			elsif (!isExtern and FUNCTION_REGEX.match(line)) or (isExtern and EXTERN_FUNCTION_REGEX.match(line)) then
 				method = BBMethod.new(line, lineno, nil, self, isExtern, isPrivate)
 				method.process()
 				@elements.push(method)
