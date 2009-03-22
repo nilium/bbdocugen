@@ -46,6 +46,8 @@ class BBType
 		
 		@@classMap.store(name.downcase, self)
 		
+		@members = []
+		
 		BBType.update_links
 	end
 	
@@ -61,26 +63,46 @@ class BBType
 		lastDoc = nil
 		
 		until line.nil? do
-			if BBRegex::TYPE_END_REGEX.match(line) then
+			if md = BBRegex::TYPE_END_REGEX.match(line) then
 				@endingLineNumber = lineNumber
 				puts "#{@startingLineNumber}..#{lineNumber} :: End of type \"#{@name}\""
-				#### TEMPORARY
-				@page = nil
+				
 				return
-			end
-			
-			if line =~ funcRegex then
-				method = BBMethod.new(line, lineNumber, isExtern)
+			elsif md = BBRegex::DOC_REGEX.match(line) then
+				@inDocComment = true
+				doc = BBDoc.new(self, line, lineno)
+				doc.process()
+				@docBlocks.push(doc)
+				@inDocComment = false
+				lastDoc = doc
+			elsif md = funcRegex.match(line) then
+				method = BBMethod.new(line, lineNumber, self, @page, self.extern?, self.private?)
 				method.process
+				@members.push(method)
 				
 				unless lastDoc.nil?
 					if method.startingLineNumber-lastDoc.endingLineNumber <= DOCUMENTATION_LINE_THRESHOLD then
 						method.documentation = lastDoc
 					end
 				end
+			elsif md = BBRegex::VARIABLE_REGEX.match(line) then
+				processValues(line, lineNumber, lastDoc)
 			end
 			
 			line, lineNumber = @page.readLine()
+		end
+	end
+	
+	def processValues(line, lineNo, lastDoc)
+		md = BBRegex::VARIABLE_REGEX.match(line)
+		raise "#{page.filePath}: Failed to match member type for '#{line}' at #{lineNumber}" if md.nil?
+		
+		mtype = md[:membertype]
+		values = md[:values].strip
+		
+		String.each_section(values) do
+			|section|
+			puts "SEC #{section}"
 		end
 	end
 	
