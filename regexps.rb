@@ -99,7 +99,7 @@ module BBRegex
 		rem:doc(?:\s+(.+))?
 	$/
 	
-	DOC_TAG_REGEX=/(?ix)^@(\w+)\s+(.+)$/
+	DOC_TAG_REGEX=/(?ix)^@(?<name>\w+)(?:\s+(?<body>.+))?$/
 	
 	REM_REGEX=/(?i)\b(?<!end|end\s)rem(?!\:doc)\b/
 	
