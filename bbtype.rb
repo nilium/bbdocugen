@@ -49,6 +49,7 @@ class BBType
 		@members = []
 		
 		@insideInspect = false
+		
 		BBType.update_links
 	end
 	
@@ -66,8 +67,6 @@ class BBType
 		until line.nil? do
 			if md = BBRegex::TYPE_END_REGEX.match(line) then
 				@endingLineNumber = lineNumber
-				puts "#{@startingLineNumber}..#{lineNumber} :: End of type \"#{@name}\""
-				
 				return
 			elsif md = BBRegex::DOC_REGEX.match(line) then
 				@inDocComment = true
