@@ -99,8 +99,6 @@ class BBSourcePage
 	end
 	
 	def processValues(line, lineNo, lastDoc, isExtern, isPrivate)
-		puts "Processing values: #{line}"
-		
 		md = VARIABLE_REGEX.match(line)
 		raise "#{page.filePath}: Failed to match member type for '#{line}' at #{lineNumber}" if md.nil?
 		
