@@ -18,53 +18,64 @@ require "bbmember.rb"
 require "bbvar.rb"
 require "sourcepage.rb"
 
+# Class to describe a method in BlitzMax.
 class BBMethod < BBMember
+	# The memberType of the method's parameters (BBVar).
 	PARAMTYPE="param"
 	
+	# Initializes a BBMethod uisng a line, at lineNumber.  You may optionally
+	# specify an owner BBType if the method is a member of a class.
 	def initialize(line, lineNumber, owner, page, isExtern, isPrivate)
 		regex = nil
 		if owner.nil? then
 			if isExtern then
 				regex = EXTERN_FUNCTION_REGEX
+				@memberType = "function"
 			else
 				regex = FUNCTION_REGEX
+				@memberType = "function"
 			end
 		else
-			if not isExtern and (md = FUNCTION_REGEX.match(line)).nil? then
+			if not isExtern and line =~ FUNCTION_REGEX then
+				regex = FUNCTION_REGEX
+				md = $~ # already matched it, don't bother doing it twice
+				@memberType = "function"
+			else
 				regex = METHOD_REGEX
+				@memberType = "method"
 			end
 		end
-		
-		md = regex.match(line) if md.nil?
+		md = regex.match(line) if md.nil?  # in the event that md was not nil after the if
 		
 		raise "Failed to recognize method type for '#{line}' at #{lineNumber}<br/>#{type}" if md.nil?
 		
 		@owner = owner
-		@page = page
 		
-		@documentation = nil
-		
-		@name = md[:name]
 		td = /^#{TYPENAME_REGEX}$/.match(md[:returntype].strip)
 		if td.nil? then
-			@type = "Int"
+			type = "Int"
 		elsif td[:fulltype] then
-			@type = td[:fulltype]
-			@type.slice!(/^:\s*/)
+			type = td[:fulltype]
+			type.slice!(/^:\s*/)
 		elsif shortcut = td[:shortcut] then
-			@type = shortcut
-			@type[0,shortcut.length] = TYPE_SHORTCUTS[shortcut]
+			type = shortcut
+			type[0,shortcut.length] = TYPE_SHORTCUTS[shortcut]
 		end
 		
-		@isExtern = isExtern
-		@isPrivate = isPrivate
+		super(md[:name], type, page)
 		
-		@startingLineNumber = lineNumber
-		@endingLineNumber = lineNumber if isExtern
+		self.isExtern = isExtern
+		self.isPrivate = isPrivate
+		
+		self.startingLineNumber = lineNumber
+		self.endingLineNumber = lineNumber if isExtern
+		
+		self.documentation = nil
 		
 		@args = processArgs(md[:arguments])
 	end
 	
+	# Process a string containing method arguments.
 	def processArgs(args)
 		args = args.strip()
 		
@@ -111,9 +122,12 @@ class BBMethod < BBMember
 		
 		return argList
 	end
+	private :processArgs
 	
+	# Read in the contents of the method.  Required to ensure that the method
+	# is not closed prematurely by matching the ending of a nested method.
 	def process
-		if @isExtern then
+		if self.extern? then
 			return
 		end
 		
@@ -130,15 +144,41 @@ class BBMethod < BBMember
 				else
 					nested -= 1
 				end
+			elsif line =~ DOC_REGEX then
+				@page.beginDocComment()
+				
+				doc = BBDoc.new(self.page, line, lineNumber)
+				doc.process()
+				
+				@page.endDocComment()
+				@page.addDocBlock(doc)
 			end
 			
 			line, lineno = @page.readLine()
 		end # until
 	end # process
 	
+	# Returns the type of method this is.  Can be 'function' or 'method'.
 	def memberType
-		"method"
+		@memberType
 	end
 	
-	private :processArgs
+	# Returns the argument list, an array of BBVars.
+	def arguments
+		return @args
+	end
+	
+	# Iterates over each argument.  Same as
+	#
+	# 	a_method.arguments.each do
+	# 		|arg|
+	# 		...
+	# 	end
+	def each_argument(&block)
+		@args.each do
+			|arg|
+			block.call(arg)
+		end
+	end
+	
 end
