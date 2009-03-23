@@ -42,6 +42,8 @@ class BBMethod < BBMember
 		@owner = owner
 		@page = page
 		
+		@documentation = nil
+		
 		@name = md[:name]
 		td = /^#{TYPENAME_REGEX}$/.match(md[:returntype].strip)
 		if td.nil? then
