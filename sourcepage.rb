@@ -312,11 +312,11 @@ def String.each_section(forString, separator=",", ignoreParentheses=false, &bloc
 		lastBreak = 0
 		char = nil
 		inString = false
-
+		
 		while index < forString.length
 			if inString and forString[index] != "\"" then
-				next
 				index += 1
+				next
 			end
 			
 			case forString[index]
