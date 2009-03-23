@@ -24,7 +24,11 @@ DOCUMENTATION_LINE_THRESHOLD = 2
 class DocTag
 	def initialize(name, body)
 		@name = name		# string
-		@body = body 
+		if body.nil? then
+			@body = ""
+		else
+			@body = body
+		end
 	end
 	
 	def name
@@ -52,24 +56,39 @@ class BBDoc
 		inline = line[BBRegex::DOC_REGEX,1]
 		
 		if inline =~ BBRegex::REM_END_REGEX then
-			inline = $`
+			inline = $`.strip
 			@endingLineNumber = lineNumber
 		end
 		
-		addLine(inline) if not inline.nil?
+		addLine(inline) if not inline.nil? and not inline.empty?
+		
+		if not @endingLineNumber.nil? then
+			finalize()
+		end
+	end
+	
+	def finalize()
+		@body.strip!
+		@tags.each do
+			|tag|
+			tag.body = tag.body.strip
+		end
+		
+		@activeTag = nil
 	end
 	
 	def process()
 		
 		return unless @endingLineNumber.nil?
 		
-		puts "Processing document block"
-		
 		line, lineno = @page.readLine()
 		while not line.nil?
 			if line =~ BBRegex::REM_END_REGEX then
 				addLine($`) if not $`.nil?
+				finalize()
+				
 				@endingLineNumber = lineno
+				
 				return
 			else
 				addLine(line)
@@ -81,12 +100,27 @@ class BBDoc
 	
 	def addLine(line)
 		if line =~ BBRegex::DOC_TAG_REGEX then
-			puts "TAG FOUND: #{$1}"
+			md = $~
+			@tags.push(@activeTag = DocTag.new(md[:name], md[:body]))
 		else
 			if @activeTag.nil? then
-				@body << " " << line
+				body = @body
 			else
-				@activeTag.body << line
+				body = @activeTag.body
+			end
+			
+			if line.empty? and !body.empty? and !body.end_with?("\n\n") then
+				body << "\n\n"
+			elsif body.empty? then
+				body << line.strip
+			else
+				body << " " << line.strip
+			end
+			
+			if @activeTag.nil? then
+				@body = body
+			else
+				@activeTag.body = body
 			end
 		end
 	end
