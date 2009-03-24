@@ -178,10 +178,6 @@ class BBSourcePage
 		return line, lineNumber
 	end
 	
-	def dispose()
-		@@sourcePages.remove(File.basename(filePath))
-	end
-	
 	def self.each_page(&pageBlock)
 		@@sourcePages.each_value do
 			|page|
