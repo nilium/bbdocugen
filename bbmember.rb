@@ -76,15 +76,8 @@ class BBMember
 	protected :initialize
 	protected :process
 	
-	# Returns a string representing the type of the member.
-	def type
-		@type
-	end
-	
-	# Sets the type of the member.
-	def type=(type)
-		@type = type
-	end
+	# A string representing the type of the member.
+	attr_accessor :type
 	protected :type=
 	
 	# Returns the type of member this is.
