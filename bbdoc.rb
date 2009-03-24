@@ -14,14 +14,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Documentation blocks
 
 require "regexps.rb"
 require "sourcepage.rb"
 
+
+################################  BBDocTag  ##################################
+
+
+
+# The maximum amount of lines between an entity and its respective
+# documentation.
 DOCUMENTATION_LINE_THRESHOLD = 2
 
+# Class to describe a tag in a documentation comment.  E.g.,
+# 
+# <tt>@param:index The index to access in the array.</tt>
 class BBDocTag
+	
+	# Initializes a new BBDocTag with the values specified.
 	def initialize(name, key, body)
 		self.name = name
 		if body.nil? then
@@ -32,10 +43,39 @@ class BBDocTag
 		self.key = key
 	end
 	
-	attr_accessor :name, :key, :body
+	# The name of the documentation tag.  E.g., 'param', 'note', 'author',
+	# etc.
+	attr_accessor :name
+	
+	# The body of the documentation tag.
+	attr_accessor :body
+	
+	# Optional key used to associate a tag with a specific item, such as a
+	# parameter's name.
+	attr_accessor :key
+
 end
 
+
+##################################  BBDoc  ###################################
+
+
+
+# Class to describe a block of documentation comments. E.g.,
+#
+# 	Rem:doc
+# 		The body of the actual documentation block.
+# 		
+# 		Can span however many lines.
+# 		
+# 		@note Until it hits a tag.
+# 		@note:Noel Tags can have single-word keys.
+# 		@note:"Noel Cower" Or they can have keys with any character other than a " in them.
+# 	EndRem
 class BBDoc
+	
+	# Initialize the documentation block with a line, its line number, and the
+	# page that owns the BBDoc.
 	def initialize(line, lineNumber, sourcePage)
 		self.startLineNumber = lineNumber
 		self.endingLineNumber = nil
@@ -60,6 +100,9 @@ class BBDoc
 		end
 	end
 	
+	# 'Finalizes' the contents of the BBDoc.  All this does is unsets the
+	# activeTag used by process and strips extraneous whitespace from the
+	# body of the BBDoc and its tags.
 	def finalize()
 		@body.strip!
 		@tags.each do
@@ -71,27 +114,30 @@ class BBDoc
 	end
 	protected :finalize
 	
+	# Read and process input until the BBDoc is closed.
 	def process()
+		return unless self.endingLineNumber.nil?
 		
-		return unless @endingLineNumber.nil?
+		page = self.page
 		
-		line, lineno = @page.readLine()
+		line, lineno = page.readLine()
 		while not line.nil?
 			if line =~ BBRegex::REM_END_REGEX then
 				addLine($`) if not $`.nil?
 				finalize()
 				
-				@endingLineNumber = lineno
+				self.endingLineNumber = lineno
 				
 				return
 			else
-				addLine(line.strip)
+				addLine(line)
 			end
 			
-			line, lineNo = @page.readLine()
+			line, lineNo = page.readLine()
 		end
 	end
 	
+	# Add a line to the BBDoc.  This handles how the line is processed.
 	def addLine(line)
 		if line =~ BBRegex::DOC_TAG_REGEX then
 			md = $~
@@ -118,11 +164,16 @@ class BBDoc
 	end
 	protected :addLine
 	
+	# Programmatically add a tag with the values specified to the BBDoc.  The
+	# new tag is returned.
 	def addTag(name, key, body)
 		@tags.push(result = BBDocTag.new(name, key, body))
 		return result
 	end
 	
+	# Returns true if obj is within the documentation threshold for attachment
+	# for the BBDoc object.  obj must be an Integer type or include/implement
+	# the starting/endingLineNumber methods provided by BBCommon.
 	def inThreshold(obj)
 		if obj.is_a?(Integer) then
 			return (obj-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
@@ -151,7 +202,7 @@ public
 	attr_reader :endingLineNumber
 	# Gets the BBDoc's source page.
 	attr_reader :page
-
+	
 protected
 	# Sets the line number the BBDoc begins on.
 	attr_writer :startingLineNumber
