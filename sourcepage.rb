@@ -82,7 +82,7 @@ class BBSourcePage
 				@inDocComment = false
 				lastDoc = doc
 			elsif TYPE_REGEX.match(line) then
-				newElem = type = BBType.new(self, line, lineno, isExtern, isPrivate)
+				newElem = type = BBType.new(line, lineno, self, isExtern, isPrivate)
 				@elements.push(type)
 				type.process
 			elsif (!isExtern and FUNCTION_REGEX.match(line)) or (isExtern and EXTERN_FUNCTION_REGEX.match(line)) then

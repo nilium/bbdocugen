@@ -59,7 +59,7 @@ class BBType
 	
 	include BBCommon
 	
-	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
+	def initialize(line, lineNumber, sourcePage, isExtern, isPrivate)
 		self.page = sourcePage
 		self.startingLineNumber = lineNumber
 		self.endingLineNumber = nil
