@@ -88,7 +88,8 @@ class BBType
 	end
 	
 	def process()
-		line, lineNumber = @page.readLine()
+		page = self.page
+		line, lineNumber = page.readLine()
 		
 		funcRegex = if @isExtern then
 			BBRegex::METHOD_REGEX
@@ -100,17 +101,17 @@ class BBType
 		
 		until line.nil? do
 			if md = BBRegex::TYPE_END_REGEX.match(line) then
-				@endingLineNumber = lineNumber
+				self.endingLineNumber = lineNumber
 				return
 			elsif md = BBRegex::DOC_REGEX.match(line) then
 				@inDocComment = true
 				doc = BBDoc.new(line, lineNumber, self)
 				doc.process()
-				@page.addElement(doc)
+				page.addElement(doc)
 				@inDocComment = false
 				lastDoc = doc
 			elsif md = funcRegex.match(line) then
-				method = BBMethod.new(line, lineNumber, self, @page, self.extern?, self.private?)
+				method = BBMethod.new(line, lineNumber, self, page, self.extern?, self.private?)
 				method.process
 				@members.push(method)
 				
@@ -129,7 +130,7 @@ class BBType
 				lastDoc = nil
 			end
 			
-			line, lineNumber = @page.readLine()
+			line, lineNumber = page.readLine()
 		end
 	end
 	
