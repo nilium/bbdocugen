@@ -105,11 +105,14 @@ class BBType
 				self.endingLineNumber = lineNumber
 				return
 			elsif BBRegex::DOC_REGEX.match(line) then
-				@inDocComment = true
+				page.beginDocComment()
+				
 				doc = BBDoc.new(line, lineNumber, self)
 				doc.process()
+				
+				page.endDocComment()
 				page.addElement(doc)
-				@inDocComment = false
+				
 				lastDoc = doc
 			elsif funcRegex.match(line) then
 				newElem = method = BBMethod.new(line, lineNumber, self, page, extern?, private?)
