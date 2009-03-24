@@ -122,6 +122,7 @@ class BBSourcePage
 			@elements.push(var)
 		end
 	end
+	private :processValues
 	
 	def readLine()
 		if @lineQueue.empty? then
