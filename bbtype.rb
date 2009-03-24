@@ -100,17 +100,17 @@ class BBType
 		lastDoc = nil
 		
 		until line.nil? do
-			if md = BBRegex::TYPE_END_REGEX.match(line) then
+			if BBRegex::TYPE_END_REGEX.match(line) then
 				self.endingLineNumber = lineNumber
 				return
-			elsif md = BBRegex::DOC_REGEX.match(line) then
+			elsif BBRegex::DOC_REGEX.match(line) then
 				@inDocComment = true
 				doc = BBDoc.new(line, lineNumber, self)
 				doc.process()
 				page.addElement(doc)
 				@inDocComment = false
 				lastDoc = doc
-			elsif md = funcRegex.match(line) then
+			elsif funcRegex.match(line) then
 				method = BBMethod.new(line, lineNumber, self, page, extern?, private?)
 				method.process
 				@members.push(method)
@@ -120,7 +120,7 @@ class BBType
 						method.documentation = lastDoc
 					end
 				end
-			elsif md = BBRegex::VARIABLE_REGEX.match(line) then
+			elsif BBRegex::VARIABLE_REGEX.match(line) then
 				if lastDoc and (lineNumber - lastDoc.endingLineNumber > DOCUMENTATION_LINE_THRESHOLD) then
 					lastDoc = nil
 				end
