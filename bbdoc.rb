@@ -21,7 +21,7 @@ require "sourcepage.rb"
 
 DOCUMENTATION_LINE_THRESHOLD = 2
 
-class DocTag
+class BBDocTag
 	def initialize(name, body)
 		@name = name		# string
 		if body.nil? then
@@ -101,7 +101,7 @@ class BBDoc
 	def addLine(line)
 		if line =~ BBRegex::DOC_TAG_REGEX then
 			md = $~
-			@tags.push(@activeTag = DocTag.new(md[:name], md[:body]))
+			@tags.push(@activeTag = BBDocTag.new(md[:name], md[:body]))
 		else
 			if @activeTag.nil? then
 				body = @body
