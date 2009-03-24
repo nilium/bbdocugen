@@ -133,4 +133,12 @@ class BBDoc
 	def endingLineNumber
 		@endingLineNumber
 	end
+	
+	def inThreshold(obj)
+		if obj.is_a?(Integer) then
+			return (obj-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
+		else
+			return (obj.startingLineNumber-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
+		end
+	end
 end
