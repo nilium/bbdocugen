@@ -31,7 +31,6 @@ class BBSourcePage
 	def initialize(filePath)
 		@filePath = filePath
 		@lineQueue = []
-		@docBlocks = []
 		@inComment = false
 		@inDocComment = false
 		@elements = []
@@ -67,7 +66,7 @@ class BBSourcePage
 				@inDocComment = true
 				doc = BBDoc.new(line, lineno, self)
 				doc.process()
-				@docBlocks.push(doc)
+				@elements.push(doc)
 				@inDocComment = false
 				lastDoc = doc
 			elsif TYPE_REGEX.match(line) then
