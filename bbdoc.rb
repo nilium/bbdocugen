@@ -134,6 +134,11 @@ class BBDoc
 		@endingLineNumber
 	end
 	
+	def addTag(name, key, body)
+		@tags.push(result = BBDocTag.new(name, key, body))
+		return result
+	end
+	
 	def inThreshold(obj)
 		if obj.is_a?(Integer) then
 			return (obj-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
