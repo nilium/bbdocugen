@@ -101,12 +101,10 @@ class BBDoc
 				body = @activeTag.body
 			end
 			
-			if line.empty? and !body.empty? and !body.end_with?("\n\n") then
-				body << "\n\n"
-			elsif body.empty? then
-				body << line.strip
+			if body.empty? then
+				body << line
 			else
-				body << " " << line.strip
+				body << "\n" << line
 			end
 			
 			if @activeTag.nil? then
