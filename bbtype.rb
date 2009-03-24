@@ -104,7 +104,7 @@ class BBType
 				@inDocComment = true
 				doc = BBDoc.new(line, lineNumber, self)
 				doc.process()
-				@page.addDocBlock(doc)
+				@page.addElement(doc)
 				@inDocComment = false
 				lastDoc = doc
 			elsif md = funcRegex.match(line) then

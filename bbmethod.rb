@@ -151,7 +151,7 @@ class BBMethod < BBMember
 				doc.process()
 				
 				@page.endDocComment()
-				@page.addDocBlock(doc)
+				@page.addElement(doc)
 			end
 			
 			line, lineno = @page.readLine()
