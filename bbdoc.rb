@@ -77,7 +77,7 @@ class BBDoc
 	# Initialize the documentation block with a line, its line number, and the
 	# page that owns the BBDoc.
 	def initialize(line, lineNumber, sourcePage)
-		self.startLineNumber = lineNumber
+		self.startingLineNumber = lineNumber
 		self.endingLineNumber = nil
 		self.body = ""
 		
