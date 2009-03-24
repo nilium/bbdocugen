@@ -32,7 +32,7 @@ class BBVar < BBMember
 		
 		super(md[:name], type, page)
 		
-		@defaultValue = md[:value]
+		@value = md[:value]
 		self.startingLineNumber = self.endingLineNumber = lineNumber
 		
 		self.isExtern = isExtern
@@ -51,18 +51,14 @@ class BBVar < BBMember
 	
 	def inspect
 		outs = "#{self.memberType} #{self.name}:#{self.type}"
-		outs << " = #{self.defaultValue}" if self.has_default?
+		outs << " = #{self.value}" if self.value
 		unless self.documentation.nil?
 			outs << " \# #{self.documentation.inspect}"
 		end
 		return outs
 	end
 	
-	def has_default?
-		return !@defaultValue.nil?
-	end
-	
-	def defaultValue
-		@defaultValue
+	def value
+		@value
 	end
 end
