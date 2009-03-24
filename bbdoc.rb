@@ -118,22 +118,6 @@ class BBDoc
 	end
 	protected :addLine
 	
-	def body
-		@body
-	end
-	
-	def page
-		@page
-	end
-	
-	def startingLineNumber
-		@startingLineNumber
-	end
-	
-	def endingLineNumber
-		@endingLineNumber
-	end
-	
 	def addTag(name, key, body)
 		@tags.push(result = BBDocTag.new(name, key, body))
 		return result
@@ -146,4 +130,23 @@ class BBDoc
 			return (obj.startingLineNumber-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
 		end
 	end
+	
+public
+	# The body of the BBDoc.
+	attr_accessor :body
+	# Gets the line number the BBDoc begins on.
+	attr_reader :startingLineNumber
+	# Gets the line number the BBDoc ends on.
+	attr_reader :endingLineNumber
+	# Gets the BBDoc's source page.
+	attr_reader :page
+
+protected
+	# Sets the line number the BBDoc begins on.
+	attr_writer :startingLineNumber
+	# Sets the line number the BBDoc ends on.
+	attr_writer :endingLineNumber
+	# Sets the BBDoc's source page.
+	attr_writer :page
+	
 end
