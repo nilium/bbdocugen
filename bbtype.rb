@@ -37,14 +37,6 @@ class BBType
 		end
 	end
 	
-	def self.isTypeDefinition(line)
-		if line =~ BBType::TYPE_REGEX then
-			return true
-		else
-			return false
-		end
-	end
-	
 	def self.update_links()
 		if @@classCount <= @@classMap.length then
 			# avoid unnecessary processing
