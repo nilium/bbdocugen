@@ -211,10 +211,6 @@ class BBSourcePage
 		@elements
 	end
 	
-	def addDocBlock(block)
-		@docBlocks.push(block)
-	end
-	
 private
 	
 	def stripComments(line)
