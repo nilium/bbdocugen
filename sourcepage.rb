@@ -192,7 +192,8 @@ class BBSourcePage
 	def loaded?
 		@loaded
 	end
-
+	
+	# Calls pageBlock for each source page, loaded or not.
 	def self.each_page(&pageBlock)
 		@@sourcePages.each_value do
 			|page|
@@ -204,13 +205,11 @@ class BBSourcePage
 		"<PAGE #{self.filePath}>"
 	end
 	
-	def filePath
-		@filePath
-	end
+	# The path to the source page.
+	attr_reader :filePath
 	
-	def elements
-		@elements
-	end
+	# Elements owned by the page
+	attr_reader :elements
 	
 private
 	
