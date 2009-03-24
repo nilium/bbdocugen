@@ -22,13 +22,15 @@ require "sourcepage.rb"
 
 class BBType
 	@@classMap = {}
+	@@classCount = 0
 	
 	def self.getType(name)
-		BBType.update_links
+		update_links
 		return @@classMap[name.downcase]
 	end
 	
 	def self.each_type(&block)
+		update_links
 		@@classMap.each_value do
 			|type|
 			block.call(type)
@@ -44,7 +46,12 @@ class BBType
 	end
 	
 	def self.update_links()
-		each_type do
+		if @@classCount <= @@classMap.length then
+			# avoid unnecessary processing
+			return
+		end
+		
+		@@classMap.each_value do
 			|type|
 			if type.is_subclass? then
 				if type.superclass.is_a?(BBType) then
@@ -53,6 +60,8 @@ class BBType
 				superclass.addSubclass(type)
 			end
 		end
+		
+		@@classCount = @@classMap.length
 	end
 	
 	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
