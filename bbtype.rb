@@ -19,6 +19,7 @@
 require "regexps.rb"
 require "bbdoc.rb"
 require "sourcepage.rb"
+require "common.rb"
 
 class BBType
 	@@classMap = {}
@@ -56,15 +57,15 @@ class BBType
 		@@classCount = @@classMap.length
 	end
 	
+	include BBCommon
+	
 	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
-		@page = sourcePage
-		@startingLineNumber = lineNumber
-		@endingLineNumber = nil
+		self.page = sourcePage
+		self.startingLineNumber = lineNumber
+		self.endingLineNumber = nil
 		
 		@subclasses = []
 		@superclass = nil
-		@isAbstract = false
-		@isFinal = false
 		
 		@docs = nil
 		
@@ -74,8 +75,8 @@ class BBType
 		self.superclass = matches[2] unless matches[2].nil?
 		@isFinal = (not matches[3].nil?)
 		@isAbstract = (not matches[4].nil?)
-		@isExtern = isExtern
-		@isPrivate = isPrivate
+		self.isExtern = isExtern
+		self.isPrivate = isPrivate
 		
 		@@classMap.store(name.downcase, self)
 		
@@ -148,44 +149,12 @@ class BBType
 		end
 	end
 	
-	def page
-		return @page
-	end
-	
-	def startingLineNumber
-		@startingLineNumber
-	end
-	
-	def startingLineNumber=(no)
-		@startingLineNumber=no
-	end
-	
-	def endingLineNumber
-		@endingLineNumber
-	end
-	
-	def endingLineNumber=(no)
-		@endingLineNumber=no
-	end
-	
 	def abstract?
 		@isAbstract
 	end
 	
 	def final?
 		@isFinal
-	end
-	
-	def extern?
-		@isExtern
-	end
-	
-	def private?
-		@isPrivate
-	end
-	
-	def name
-		@name
 	end
 	
 	def members
@@ -248,14 +217,6 @@ class BBType
 			|sub|
 			proc.call(sub)
 		end
-	end
-	
-	def documentation=(docs)
-		@docs = docs
-	end
-	
-	def documentation
-		@docs
 	end
 	
 	def each_super(&block)
