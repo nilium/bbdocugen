@@ -21,6 +21,7 @@ require "bbdoc.rb"
 require "bbtype.rb"
 require "bbmethod.rb"
 require "bbvar.rb"
+require "common.rb"
 
 class BBSourcePage
 	include BBRegex
@@ -280,68 +281,4 @@ class BBSourcePage
 	private:blockCommentBegin
 	private:stripInternalBlockComment
 	private:stripLineComment
-end
-
-def positionInString(string, position)
-	inString = false
-	currentPos = 0
-	string.each_char do
-		|char|
-		
-		inString = !inString if char == '"'
-		
-		if currentPos == position then
-			return inString
-		end
-		
-		currentPos += 1
-	end
-	
-	# basically, if you get this, you're doing something wrong, so while you can
-	# safely ignore it, you should look to see why you're checking for a position
-	# outside a string
-	raise "Position (#{position.to_s}) is outside of the string"
-end
-
-def String.each_section(forString, separator=",", ignoreParentheses=false, &block)
-	unless forString.empty?
-		parenLevel = 0
-		index = 0
-		lastBreak = 0
-		char = nil
-		inString = false
-		
-		while index < forString.length
-			if inString and forString[index] != "\"" then
-				index += 1
-				next
-			end
-			
-			case forString[index]
-				when ","
-					if parenLevel == 0 then
-						block.call(forString[lastBreak,index-lastBreak])
-						lastBreak = index+1
-					end
-				
-				when "("
-					parenLevel += 1 unless ignoreParentheses
-			
-				when ")"
-					parenLevel -= 1 unless ignoreParentheses
-					if parenLevel < 0 then
-						raise "Parsing error: too many closing parentheses in '#{args}' at #{index}"
-					end
-				
-				when "\""
-					inString = !inString
-			end
-
-			index += 1
-		end
-
-		if lastBreak != index then
-			block.call(forString[lastBreak..-1])
-		end
-	end
 end
