@@ -18,8 +18,14 @@ require "bbmember.rb"
 require "bbvar.rb"
 require "sourcepage.rb"
 
+
+
+################################  BBMethod  ##################################
+
+
 # Class to describe a method in BlitzMax.
 class BBMethod < BBMember
+	
 	# The memberType of the method's parameters (BBVar).
 	PARAMTYPE="param"
 	
@@ -152,6 +158,10 @@ class BBMethod < BBMember
 				
 				@page.endDocComment()
 				@page.addElement(doc)
+				
+				if self.documentation.nil? then
+					self.documentation = doc
+				end
 			end
 			
 			line, lineno = @page.readLine()
