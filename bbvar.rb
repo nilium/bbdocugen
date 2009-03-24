@@ -22,20 +22,21 @@ class BBVar < BBMember
 	def initialize(value, lineNumber, page, memberType, isExtern, isPrivate)
 		md = VALUE_REGEX.match(value)
 		
-		if (@type = md[:typename]).nil? then
-			@type = "Int"
+		if (type = md[:typename]).nil? then
+			type = "Int"
 		elsif md[:fulltype] then
-			@type.slice!(/^:\s*/)
+			type.slice!(/^:\s*/)
 		elsif shortcut = md[:shortcut] then
-			@type[0,shortcut.length] = TYPE_SHORTCUTS[shortcut]
+			type[0,shortcut.length] = TYPE_SHORTCUTS[shortcut]
 		end
 		
-		@name = md[:name]
-		@defaultValue = md[:value]
-		@startingLineNumber = @endingLineNumber = lineNumber
+		super(md[:name], type, page)
 		
-		@isExtern = isExtern
-		@isPrivate = isPrivate
+		@defaultValue = md[:value]
+		self.startingLineNumber = self.endingLineNumber = lineNumber
+		
+		self.isExtern = isExtern
+		self.isPrivate = isPrivate
 		
 		@memberType = memberType
 	end
