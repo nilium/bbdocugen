@@ -91,7 +91,7 @@ class BBType
 		
 		matches = BBRegex::TYPE_REGEX.match(line)
 		
-		@name = matches[1]
+		self.name = matches[1]
 		self.superclass = matches[2] unless matches[2].nil?
 		@isFinal = (not matches[3].nil?)
 		@isAbstract = (not matches[4].nil?)
