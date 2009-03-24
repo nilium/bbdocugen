@@ -67,6 +67,7 @@ class BBDoc
 		
 		@activeTag = nil
 	end
+	protected :finalize
 	
 	def process()
 		
@@ -115,6 +116,7 @@ class BBDoc
 			end
 		end
 	end
+	protected :addLine
 	
 	def body
 		@body
