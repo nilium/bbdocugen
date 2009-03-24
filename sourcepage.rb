@@ -201,6 +201,29 @@ class BBSourcePage
 		end
 	end
 	
+	# Adds an element to the source page.
+	def addElement(obj)
+		@elements.push(obj)
+	end
+	
+	# Removes an element from the source page.
+	def removeElement(obj)
+		@elements.delete(obj)
+	end
+	
+	# Informs the page that it is currently processing a documentation comment
+	# and to refrain from stripping comments in the line, splitting the line
+	# on semicolons, and concatenating lines that end in "..".
+	def beginDocComment
+		@inDocComment = true 
+	end
+	
+	# Informs the page that it is not currently processing a documentation
+	# comment and to strip comments in the line.
+	def endDocComment
+		@inDocComment = false
+	end
+	
 	# The path to the source page.
 	attr_reader :filePath
 	
