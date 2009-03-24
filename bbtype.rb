@@ -148,6 +148,7 @@ class BBType
 			@members.push(var)
 		end
 	end
+	private :processValues
 	
 	def abstract?
 		@isAbstract
