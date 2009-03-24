@@ -91,7 +91,7 @@ class BBType
 		page = self.page
 		line, lineNumber = page.readLine()
 		
-		funcRegex = if @isExtern then
+		funcRegex = if extern? then
 			BBRegex::METHOD_REGEX
 		else
 			Regexp.union(BBRegex::FUNCTION_REGEX, BBRegex::METHOD_REGEX)
