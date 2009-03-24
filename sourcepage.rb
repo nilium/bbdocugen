@@ -201,10 +201,6 @@ class BBSourcePage
 		end
 	end
 	
-	def inspect
-		"<PAGE #{self.filePath}>"
-	end
-	
 	# The path to the source page.
 	attr_reader :filePath
 	
