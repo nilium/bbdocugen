@@ -111,7 +111,7 @@ class BBType
 				@inDocComment = false
 				lastDoc = doc
 			elsif md = funcRegex.match(line) then
-				method = BBMethod.new(line, lineNumber, self, page, self.extern?, self.private?)
+				method = BBMethod.new(line, lineNumber, self, page, extern?, private?)
 				method.process
 				@members.push(method)
 				
@@ -144,7 +144,7 @@ class BBType
 		String.each_section(values) do
 			|section|
 			
-			var = BBVar.new(section, lineNo, self.page, mtype, self.extern?, self.private?)
+			var = BBVar.new(section, lineNo, self.page, mtype, extern?, private?)
 			var.documentation = lastDoc
 			@members.push(var)
 		end
@@ -169,9 +169,9 @@ class BBType
 		else
 			@insideInspect = true
 			outs = "Type #{self.name}"
-			outs << " Extends #{self.superclass.to_s}" if self.is_subclass?
-			outs << " Abstrast" if self.abstract?
-			outs << " Final" if self.final?
+			outs << " Extends #{self.superclass.to_s}" if is_subclass?
+			outs << " Abstrast" if abstract?
+			outs << " Final" if final?
 		
 			self.members.each do
 				|member|
