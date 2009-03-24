@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# source page
 
 require "regexps.rb"
 require "bbdoc.rb"
@@ -23,11 +22,21 @@ require "bbmethod.rb"
 require "bbvar.rb"
 require "common.rb"
 
+
+###############################  BBSourcePage  ################################
+
+
+
+# Describes a BlitzMax source code file.  This is the root of all methods,
+# types, and variables for a single file.
 class BBSourcePage
 	include BBRegex
 	
+	# A map of all filenames to their source pages.  These filenames are
+	# absolute and case sensitive.
 	@@sourcePages = {}
 	
+	# Initializes a new source page.
 	def initialize(filePath)
 		@filePath = filePath
 		@lineQueue = []
@@ -39,6 +48,8 @@ class BBSourcePage
 		@@sourcePages.store(File.basename(filePath), self)
 	end
 	
+	# Begins processing on a source code filed and does not stop until it is
+	# done reading the entire file.
 	def process()
 		if self.loaded? then
 			return
@@ -107,6 +118,9 @@ class BBSourcePage
 		@loaded = true
 	end
 	
+	# Reads a line containing one or more variables and extracts the
+	# variables' names, types, and values and adds them to the source page's
+	# elements.
 	def processValues(line, lineNo, lastDoc, isExtern, isPrivate)
 		md = VARIABLE_REGEX.match(line)
 		raise "#{page.filePath}: Failed to match member type for '#{line}' at #{lineNumber}" if md.nil?
@@ -124,6 +138,15 @@ class BBSourcePage
 	end
 	private :processValues
 	
+	# Reads a line from the source page.
+	# 
+	# This method will strip any block comments (excluding documentation
+	# comments) and line comments, split lines into multiple lines where there
+	# is a semicolon, and read additional lines if '..' is present at the end
+	# of the source line.
+	# 
+	# Returns the line and lineNumber.  The line is nil and the number is -1
+	# if eof has been reached.
 	def readLine()
 		if @lineQueue.empty? then
 			## read next line from stream
@@ -232,6 +255,7 @@ class BBSourcePage
 	
 private
 	
+	# Strips all found comments from line.
 	def stripComments(line)
 		if @inComment then
 			return stripLineComment(stripBlockComments(line)).strip
@@ -240,6 +264,7 @@ private
 		end
 	end
 	
+	# Strips block comments from the line.
 	def stripBlockComments(line)
 		## strip any comment blocks from the line (this is crude)
 		if @inComment and line =~ REM_END_REGEX then
@@ -255,6 +280,8 @@ private
 		end
 	end
 	
+	# Specifically processes the beginnings of block comments in the line.
+	# This will set inComment to true if a beginning is found.
 	def blockCommentBegin(line)
 		if !@inComment and line =~ REM_REGEX then
 			line = $`
@@ -263,6 +290,7 @@ private
 		return line
 	end
 	
+	# Strips any block comments that begin and end in the same line.
 	def stripInternalBlockComment(line)
 		remStart = 0
 		while remStart = (line =~ REM_REGEX)
@@ -276,6 +304,7 @@ private
 		return line
 	end
 	
+	# Strips single-line comments (those that begin with a single quote).
 	def stripLineComment(line)
 		offset = 0
 		
