@@ -107,12 +107,6 @@ class BBSourcePage
 		@loaded = true
 	end
 	
-	# Returns whether or not the source page has already been loaded and
-	# processed.
-	def loaded?
-		@loaded
-	end
-	
 	def processValues(line, lineNo, lastDoc, isExtern, isPrivate)
 		md = VARIABLE_REGEX.match(line)
 		raise "#{page.filePath}: Failed to match member type for '#{line}' at #{lineNumber}" if md.nil?
@@ -192,12 +186,36 @@ class BBSourcePage
 		return line, lineNumber
 	end
 	
+	# Returns whether or not the source page has already been loaded and
+	# processed.
+	def loaded?
+		@loaded
+	end
+
 	def self.each_page(&pageBlock)
 		@@sourcePages.each_value do
 			|page|
 			pageBlock.call(page)
 		end
 	end
+	
+	def inspect
+		"<PAGE #{self.filePath}>"
+	end
+	
+	def filePath
+		@filePath
+	end
+	
+	def elements
+		@elements
+	end
+	
+	def addDocBlock(block)
+		@docBlocks.push(block)
+	end
+	
+private
 	
 	def stripComments(line)
 		if @inComment then
@@ -270,25 +288,4 @@ class BBSourcePage
 		return line
 	end
 	
-	def inspect
-		"<PAGE #{self.filePath}>"
-	end
-	
-	def filePath
-		@filePath
-	end
-	
-	def elements
-		@elements
-	end
-	
-	def addDocBlock(block)
-		@docBlocks.push(block)
-	end
-	
-	private:stripComments
-	private:stripBlockComments
-	private:blockCommentBegin
-	private:stripInternalBlockComment
-	private:stripLineComment
 end
