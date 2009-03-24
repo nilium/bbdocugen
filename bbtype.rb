@@ -23,6 +23,38 @@ require "sourcepage.rb"
 class BBType
 	@@classMap = {}
 	
+	def self.getType(name)
+		BBType.update_links
+		return @@classMap[name.downcase]
+	end
+	
+	def self.each_type(&block)
+		@@classMap.each_value do
+			|type|
+			block.call(type)
+		end
+	end
+	
+	def self.isTypeDefinition(line)
+		if line =~ BBType::TYPE_REGEX then
+			return true
+		else
+			return false
+		end
+	end
+	
+	def self.update_links()
+		each_type do
+			|type|
+			if type.is_subclass? then
+				if type.superclass.is_a?(BBType) then
+					superclass = type.superclass
+				end
+				superclass.addSubclass(type)
+			end
+		end
+	end
+	
 	def initialize(sourcePage, line, lineNumber, isExtern = false, isPrivate = false)
 		@page = sourcePage
 		@startingLineNumber = lineNumber
@@ -233,40 +265,8 @@ class BBType
 		end
 	end
 	
-	def self.getType(name)
-		BBType.update_links
-		return @@classMap[name.downcase]
-	end
-	
-	def self.each_type(&block)
-		@@classMap.each_value do
-			|type|
-			block.call(type)
-		end
-	end
-	
-	def self.isTypeDefinition(line)
-		if line =~ BBType::TYPE_REGEX then
-			return true
-		else
-			return false
-		end
-	end
-	
 	def to_s
 		return self.name
-	end
-	
-	def self.update_links()
-		each_type do
-			|type|
-			if type.is_subclass? then
-				if type.superclass.is_a?(BBType) then
-					superclass = type.superclass
-				end
-				superclass.addSubclass(type)
-			end
-		end
 	end
 	
 	def addSubclass(sub)
