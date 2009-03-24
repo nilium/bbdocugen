@@ -49,6 +49,7 @@ class BBSourcePage
 		isPrivate = false
 		isExtern = false
 		lastDoc = nil
+		newElem = nil
 		
 		line, lineno = readLine()
 		while not line.nil?
@@ -70,24 +71,15 @@ class BBSourcePage
 				@inDocComment = false
 				lastDoc = doc
 			elsif TYPE_REGEX.match(line) then
-				type = BBType.new(self, line, lineno, isExtern, isPrivate)
+				newElem = type = BBType.new(line, lineno, self, isExtern, isPrivate)
 				@elements.push(type)
 				type.process
-				
-				unless lastDoc.nil?
-					type.documentation=lastDoc if (type.startingLineNumber-lastDoc.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
-					lastDoc = nil
-				end
 			elsif (!isExtern and FUNCTION_REGEX.match(line)) or (isExtern and EXTERN_FUNCTION_REGEX.match(line)) then
-				method = BBMethod.new(line, lineno, nil, self, isExtern, isPrivate)
+				newElem = method = BBMethod.new(line, lineno, nil, self, isExtern, isPrivate)
 				method.process()
 				@elements.push(method)
-				
-				if method.startingLineNumber-lastDoc.endingLineNumber <= DOCUMENTATION_LINE_THRESHOLD then
-					method.documentation = lastDoc
-				end
 			elsif VARIABLE_REGEX.match(line) then
-				if lastDoc and lineno - lastDoc.endingLineNumber > DOCUMENTATION_LINE_THRESHOLD then
+				if lastDoc and !lastDoc.inThreshold(lineno) then
 					lastDoc = nil
 				end
 				
@@ -95,6 +87,16 @@ class BBSourcePage
 				
 				lastDoc = nil
 			end
+			
+			unless lastDoc.nil? or newElem.nil?
+				if lastDoc.inThreshold(newElem) and newElem.documentation.nil? then
+					newElem.documentation = lastDoc
+				end
+				
+				lastDoc = nil
+			end
+			
+			newElem = nil
 			
 			line, lineno = readLine()
 		end
