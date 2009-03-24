@@ -14,8 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 require "regexps.rb"
 require "sourcepage.rb"
+require "common.rb"
+
+
+################################  BBMember  ##################################
 
 
 # Base class for BlitzMax members.  These may be global variables, methods,
@@ -24,6 +29,7 @@ require "sourcepage.rb"
 # This class should not be used by itself.
 class BBMember
 	
+	include BBCommon
 	include BBRegex
 	
 	# Map of type shortcuts.
@@ -64,24 +70,11 @@ class BBMember
 	
 	# Base process method.
 	def process
+		raise "Cannot call process for BBMember" if self.class == BBMember
 	end
 	
 	protected :initialize
 	protected :process
-	
-	
-	### Basic information
-	
-	# Returns the name of the member.
-	def name
-		@name
-	end
-	
-	# Sets the name of the member.
-	def name=(name)
-		@name = name
-	end
-	protected :name=
 	
 	# Returns a string representing the type of the member.
 	def type
@@ -94,97 +87,13 @@ class BBMember
 	end
 	protected :type=
 	
-	# Returns the page the member belongs to.
-	def page
-		@page
-	end
-	
-	# Sets the page that the member belongs to.
-	def page=(page)
-		@page = page
-	end
-	protected :page=
-	
-	# Returns whether or not the member is inside of an Extern block.
-	def extern?
-		@isExtern
-	end
-	
-	# Sets whether or not the member is inside of an Extern block.
-	def isExtern=(isExtern)
-		@isExtern = isExtern
-	end
-	protected :isExtern=
-	
-	# Returns whether or not the member is private.
-	def private?
-		@isPrivate
-	end
-	
-	# Sets whether or not the member is private.
-	def isPrivate=(isPrivate)
-		@isPrivate = isPrivate
-	end
-	protected :isPrivate=
-	
-	# Returns whether or not the member is public.  The is the inverse of private?
-	def public?
-		!self.private?
-	end
-	
-	
-	### Line numbers
-	
-	# Returns the line that the member starts on.
-	def startingLineNumber
-		@startingLineNumber
-	end
-	
-	# Sets the line that the member ends on.
-	def startingLineNumber=(line)
-		@startingLineNumber = line
-	end
-	protected :startingLineNumber=
-	
-	# Returns the line that the member ends on.
-	def endingLineNumber
-		@endingLineNumber
-	end
-	
-	# Sets line that the member ends on.
-	def endingLineNumber=(line)
-		@endingLineNumber = line
-	end
-	protected :endingLineNumber=
-	
-	# Returns a Range for startingLineNumber to endingLineNumber, inclusive.
-	def lineRange
-		Range.new(@startingLineNumber, @endingLineNumber, false)
-	end
-
-
-	### Documentation
-
-	# Returns a reference to a BBDoc object if one is associated with the member, otherwise nil.
-	def documentation
-		@documentation
-	end
-	
-	# Sets the member's documentation object to doc.  Must be a BBDoc.
-	def documentation=(doc)
-		raise "Documentation object is not a BBDoc" unless doc.nil? or doc.is_a?(BBDoc)
-		@documentation = doc
-	end
-	
-	
-	### Types
-	
 	# Returns the type of member this is.
 	def memberType
 		raise "Not implemented"
 	end
 	
-	# Returns a reference to a BBType if one is found that matches the member's type.  The result is cached.
+	# Returns a reference to a BBType if one is found that matches the
+	# member's type.  The result is cached.
 	def typeRef
 		if self.type.nil? then
 			@typeRef = nil
