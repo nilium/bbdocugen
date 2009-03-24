@@ -23,25 +23,15 @@ DOCUMENTATION_LINE_THRESHOLD = 2
 
 class BBDocTag
 	def initialize(name, body)
-		@name = name		# string
+		self.name = name
 		if body.nil? then
-			@body = ""
+			self.body = ""
 		else
-			@body = body
+			self.body = body
 		end
 	end
 	
-	def name
-		@name
-	end
-	
-	def body
-		@body
-	end
-	
-	def body=(body)
-		@body = body
-	end
+	attr_accessor :name, :body
 end
 
 class BBDoc
