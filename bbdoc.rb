@@ -27,7 +27,7 @@ class BBDocTag
 		if body.nil? then
 			self.body = ""
 		else
-			self.body = body
+			self.body = body.strip
 		end
 		self.key = key
 	end
@@ -83,7 +83,7 @@ class BBDoc
 				
 				return
 			else
-				addLine(line)
+				addLine(line.strip)
 			end
 			
 			line, lineNo = @page.readLine()
