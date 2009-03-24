@@ -98,6 +98,7 @@ class BBType
 		end
 		
 		lastDoc = nil
+		newElem = nil
 		
 		until line.nil? do
 			if BBRegex::TYPE_END_REGEX.match(line) then
@@ -111,17 +112,11 @@ class BBType
 				@inDocComment = false
 				lastDoc = doc
 			elsif funcRegex.match(line) then
-				method = BBMethod.new(line, lineNumber, self, page, extern?, private?)
+				newElem = method = BBMethod.new(line, lineNumber, self, page, extern?, private?)
 				method.process
 				@members.push(method)
-				
-				unless lastDoc.nil?
-					if method.startingLineNumber-lastDoc.endingLineNumber <= DOCUMENTATION_LINE_THRESHOLD then
-						method.documentation = lastDoc
-					end
-				end
 			elsif BBRegex::VARIABLE_REGEX.match(line) then
-				if lastDoc and (lineNumber - lastDoc.endingLineNumber > DOCUMENTATION_LINE_THRESHOLD) then
+				if lastDoc and !lastDoc.inThreshold(lineNumber) then
 					lastDoc = nil
 				end
 				
@@ -129,6 +124,16 @@ class BBType
 				
 				lastDoc = nil
 			end
+			
+			unless lastDoc.nil? or newElem.nil?
+				if lastDoc.inThreshold(newElem) and newElem.documentation.nil? then
+					newElem.documentation = lastDoc
+				end
+				
+				lastDoc = nil
+			end
+			
+			newElem = nil
 			
 			line, lineNumber = page.readLine()
 		end
