@@ -147,7 +147,7 @@ class BBMethod < BBMember
 			elsif line =~ DOC_REGEX then
 				@page.beginDocComment()
 				
-				doc = BBDoc.new(self.page, line, lineNumber)
+				doc = BBDoc.new(line, lineNumber, self.page)
 				doc.process()
 				
 				@page.endDocComment()

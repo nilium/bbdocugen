@@ -36,7 +36,7 @@ class BBDocTag
 end
 
 class BBDoc
-	def initialize(sourcePage, line, lineNumber)
+	def initialize(line, lineNumber, sourcePage)
 		@startLineNumber = lineNumber
 		@endingLineNumber = nil
 		@body = ""

@@ -59,7 +59,7 @@ class BBSourcePage
 				isExtern = false
 			elsif DOC_REGEX.match(line) then
 				@inDocComment = true
-				doc = BBDoc.new(self, line, lineno)
+				doc = BBDoc.new(line, lineno, self)
 				doc.process()
 				@docBlocks.push(doc)
 				@inDocComment = false
