@@ -37,11 +37,13 @@ end
 
 class BBDoc
 	def initialize(line, lineNumber, sourcePage)
-		@startLineNumber = lineNumber
-		@endingLineNumber = nil
-		@body = ""
+		self.startLineNumber = lineNumber
+		self.endingLineNumber = nil
+		self.body = ""
+		
 		@tags = []
 		@page = sourcePage
+		
 		@activeTag = nil
 		
 		inline = line[BBRegex::DOC_REGEX,1]
@@ -126,6 +128,17 @@ class BBDoc
 			return (obj-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
 		else
 			return (obj.startingLineNumber-self.endingLineNumber) <= DOCUMENTATION_LINE_THRESHOLD
+		end
+	end
+	
+	# Tags contained in the documentation BBDoc.
+	attr_reader :tags
+	
+	# Calls block for each tag in the BBDoc.
+	def each_tag(&block)
+		@tags.each do
+			|tag|
+			block.call(tag)
 		end
 	end
 	
