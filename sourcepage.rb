@@ -35,11 +35,16 @@ class BBSourcePage
 		@inComment = false
 		@inDocComment = false
 		@elements = []
+		@loaded = false
 		
 		@@sourcePages.store(File.basename(filePath), self)
 	end
 	
 	def process()
+		if self.loaded? then
+			return
+		end
+		
 		@stream = File.new(@filePath)
 		
 		isPrivate = false
@@ -97,6 +102,14 @@ class BBSourcePage
 		
 		@stream.close()
 		stream = nil
+		
+		@loaded = true
+	end
+	
+	# Returns whether or not the source page has already been loaded and
+	# processed.
+	def loaded?
+		@loaded
 	end
 	
 	def processValues(line, lineNo, lastDoc, isExtern, isPrivate)
